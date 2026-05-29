@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Dashboard — Mandaê</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafd;color:#1e293b;min-height:100vh}
+.app{max-width:680px;margin:0 auto;padding:40px 24px}
+.logo-row{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.badge{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:700}
+.bn{background:#0d1b4b;color:#fff}.bb{background:#eff3ff;color:#1652f0}
+.card{background:#fff;border-radius:16px;border:1px solid #dde3f0;padding:28px;margin-bottom:20px;box-shadow:0 4px 20px rgba(22,82,240,0.06)}
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.sn{width:28px;height:28px;border-radius:50%;background:#1652f0;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.st{font-size:15px;font-weight:700;color:#0d1b4b}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ub{border:2px dashed #dde3f0;border-radius:12px;padding:22px;text-align:center;cursor:pointer;transition:all .2s;background:#f8fafd}
+.ub:hover{border-color:#1652f0;background:#f0f4ff}
+.ub.ok{border-color:#0eb887;border-style:solid;background:#f0fdf9}
+.ui{font-size:26px;margin-bottom:6px}
+.ub.ok .ui{color:#0eb887}
+.ut{font-size:13px;color:#64748b}
+.un{font-size:13px;font-weight:600;color:#0eb887;margin-top:3px;display:none}
+.us{font-size:11px;color:#94a3b8;margin-top:2px}
+.toggles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.tog{padding:8px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #dde3f0;background:#fff;color:#94a3b8;font-family:inherit}
+.tog.on{background:#eff3ff;color:#1652f0;border-color:#1652f0}
+.btn{width:100%;padding:15px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#0d3fa8,#1652f0);color:#fff;cursor:pointer;font-family:inherit;margin-top:4px}
+.btn:hover{opacity:.9}
+.err{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;font-size:13px;color:#991b1b;margin-bottom:16px;display:none}
+.ok-area{text-align:center;padding:40px 20px;display:none}
+.oi{font-size:56px;margin-bottom:16px}
+.oh{font-size:22px;font-weight:800;color:#0d1b4b;margin-bottom:8px}
+.os{font-size:14px;color:#64748b;margin-bottom:28px}
+.bdl{display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#0d3fa8,#1652f0);color:#fff;cursor:pointer;font-family:inherit;margin-right:10px}
+.brs{display:inline-block;padding:13px 30px;font-size:14px;font-weight:600;border:1.5px solid #1652f0;border-radius:12px;background:#fff;color:#1652f0;cursor:pointer;font-family:inherit}
+.info{background:#f8fafd;border:1px solid #dde3f0;border-radius:10px;padding:14px 16px;font-size:12px;color:#475569;line-height:1.8;margin-top:12px}
+.info code{font-family:monospace;font-size:11px;background:#eff3ff;padding:1px 5px;border-radius:4px;color:#1652f0}
+@media(max-width:560px){.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="logo-row">
+    <span class="badge bn">Mandaê</span>
+    <span style="color:#94a3b8;font-size:18px">×</span>
+    <span class="badge bb">Dashboard Generator</span>
+  </div>
+
+  <div id="form-area">
+    <div class="card">
+      <div class="sh"><div class="sn">1</div><div class="st">Upload dos arquivos</div></div>
+      <div class="g2">
+        <div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:6px;font-weight:600">📊 Arquivo de Performance</div>
+          <div class="ub" id="box-p" onclick="document.getElementById('inp-p').click()">
+            <div class="ui" id="ico-p">⬆</div>
+            <div class="ut">Relatório de Envios<br><span style="font-size:11px">(.xlsx)</span></div>
+            <div id="nm-p" class="un"></div>
+            <div id="sh-p" class="us"></div>
+          </div>
+          <input type="file" id="inp-p" accept=".xlsx,.xls" style="display:none" onchange="loadPerf(this)">
+        </div>
+        <div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:6px;font-weight:600">🎧 Arquivo de Tickets CS</div>
+          <div class="ub" id="box-t" onclick="document.getElementById('inp-t').click()">
+            <div class="ui" id="ico-t">⬆</div>
+            <div class="ut">Relatório de ocorrências<br><span style="font-size:11px">(Relacionamento...xlsx)</span></div>
+            <div id="nm-t" class="un"></div>
+            <div id="sh-t" class="us"></div>
+          </div>
+          <input type="file" id="inp-t" accept=".xlsx,.xls" style="display:none" onchange="loadTkt(this)">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="sh"><div class="sn">2</div><div class="st">Seções do painel</div></div>
+      <div class="toggles">
+        <button class="tog on" id="tog-m" onclick="tog('m')">📋 Sobre a Mandaê</button>
+        <button class="tog on" id="tog-p" onclick="tog('p')">📊 Performance</button>
+        <button class="tog on" id="tog-t" onclick="tog('t')">🎧 Tickets CS</button>
+      </div>
+    </div>
+
+    <div id="err" class="err"></div>
+    <button class="btn" onclick="generate()">⚡ Gerar Dashboard HTML</button>
+  </div>
+
+  <div class="ok-area" id="ok-area">
+    <div class="oi">🎉</div>
+    <div class="oh" id="ok-title">Dashboard gerado!</div>
+    <div class="os" id="ok-sub">Clique abaixo para baixar o HTML.</div>
+    <button class="bdl" onclick="downloadHTML()">⬇ Download do HTML</button>
+    <button class="brs" onclick="reset()">Gerar outro</button>
+  </div>
+</div>
+
+<script>
+// ── state ──
+let perfData=null, tktData=null;
+let secM=true,secP=true,secT=true;
+let genHTML='';
+
+function showErr(m){const e=document.getElementById('err');e.textContent=m;e.style.display=m?'block':'none';}
+function tog(s){
+  if(s==='m'){secM=!secM;document.getElementById('tog-m').classList.toggle('on',secM);}
+  if(s==='p'){secP=!secP;document.getElementById('tog-p').classList.toggle('on',secP);}
+  if(s==='t'){secT=!secT;document.getElementById('tog-t').classList.toggle('on',secT);}
+}
+
+function readXlsx(f){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=e=>{try{res(XLSX.read(e.target.result,{type:'array',cellDates:true}));}catch(err){rej(err);}};
+    r.onerror=rej;r.readAsArrayBuffer(f);
+  });
+}
+
+// UF → region
+function ufReg(uf){
+  if(['SP','RJ','MG','ES'].includes(uf)) return 'Sudeste';
+  if(['PR','SC','RS'].includes(uf)) return 'Sul';
+  if(['DF','GO','MT','MS'].includes(uf)) return 'Centro-Oeste';
+  if(['BA','PE','CE','MA','PB','RN','AL','SE','PI'].includes(uf)) return 'Nordeste';
+  return 'Norte';
+}
+
+async function loadPerf(inp){
+  const f=inp.files[0]; if(!f)return;
+  try{
+    const wb=await readXlsx(f);
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
+    // normalise column names for alternate format
+    const nomeCol=Object.keys(rows[0]||{}).find(c=>c.toLowerCase().includes('nome'));
+    rows.forEach(r=>{
+      if(nomeCol&&nomeCol!=='nome') r.nome=r[nomeCol];
+      // parse dates — Date obj, Excel serial, dd/mm/yyyy, yyyy-mm-dd
+      ['data_envio','data_previsao_entrega_cliente','data_entrega'].forEach(k=>{
+        const v=r[k];
+        if(!v){ r[k+'_d']=null; return; }
+        if(v instanceof Date){ r[k+'_d']=v; return; }
+        if(typeof v==='number'){ r[k+'_d']=new Date((v-25569)*86400000); return; }
+        if(typeof v==='string'){
+          const dm=v.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+          if(dm){ r[k+'_d']=new Date(+dm[3],+dm[2]-1,+dm[1]); return; }
+          r[k+'_d']=new Date(v);
+        }
+      });
+    });
+    // filter out summary/total rows
+    const validRows=rows.filter(r=>r.status&&r.status!=='Total'&&r.servico_envio&&r.servico_envio!=='Total'&&r['data_envio_d']&&!isNaN(r['data_envio_d']));
+    // group by month
+    const byMonth={};
+    validRows.forEach(r=>{
+      const m=r['data_envio_d'].getMonth()+1;
+      if(!byMonth[m]) byMonth[m]=[];
+      byMonth[m].push(r);
+    });
+    // compute stats per month
+    perfData={};
+    const cliente=validRows.find(r=>r.nome)?.nome||'Cliente';
+    perfData.cliente=cliente;
+    const mesesExcel=Object.keys(byMonth).map(Number).sort((a,b)=>a-b);
+    perfData.meses=mesesExcel;
+    mesesExcel.forEach(m=>{
+      const mrs=byMonth[m];
+      const total=mrs.length;
+      const entregues=mrs.filter(r=>r.status==='Entregue').length;
+      const devolvidas=mrs.filter(r=>r.status&&(r.status.toLowerCase().includes('devolv')||r.status.toLowerCase().includes('em devolução'))).length;
+      const extraviadas=mrs.filter(r=>r.status==='Extraviada').length;
+      const enviadas=mrs.filter(r=>r.status==='Enviada'||r.status==='Aguardando retirada do destinatário').length;
+      const atrasados=mrs.filter(r=>{
+        const de=r['data_entrega_d'],dp=r['data_previsao_entrega_cliente_d'];
+        return de&&dp&&!isNaN(de)&&!isNaN(dp)&&de>dp;
+      }).length;
+      const ticketMedio=mrs.reduce((s,r)=>s+(Number(r.preco_frete)||0),0)/total;
+      const rapido=mrs.filter(r=>r.servico_envio==='Rápido').length;
+      const economico=mrs.filter(r=>r.servico_envio==='Econômico').length;
+      // regions
+      const regCounts={Sudeste:0,Sul:0,'Centro-Oeste':0,Nordeste:0,Norte:0};
+      const regFretes={Sudeste:[],Sul:[],  'Centro-Oeste':[],Nordeste:[],Norte:[]};
+      mrs.forEach(r=>{const rg=ufReg(r.uf);if(regCounts[rg]!==undefined){regCounts[rg]++;regFretes[rg].push(Number(r.preco_frete)||0);}});
+      const regTicket={};
+      Object.keys(regFretes).forEach(rg=>{const arr=regFretes[rg];regTicket[rg]=arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:0;});
+      perfData[m]={
+        total,entregues,devolvidas,extraviadas,enviadas,atrasados,
+        ent_pct:total>0?entregues/total*100:0,
+        atr_pct:total>0?atrasados/total*100:0,
+        dev_pct:total>0?devolvidas/total*100:0,
+        ext_pct:total>0?extraviadas/total*100:0,
+        ticketMedio,
+        eco_pct:total>0?economico/total*100:0,
+        rap_pct:total>0?rapido/total*100:0,
+        regCounts,regTicket
+      };
+    });
+    document.getElementById('box-p').classList.add('ok');
+    document.getElementById('ico-p').textContent='✓';
+    const nm=document.getElementById('nm-p');nm.textContent=f.name;nm.style.display='block';
+    document.getElementById('sh-p').textContent=mesesExcel.length+' meses encontrados';
+  }catch(e){showErr('Erro no arquivo de performance: '+e.message);}
+}
+
+async function loadTkt(inp){
+  const f=inp.files[0]; if(!f)return;
+  try{
+    const wb=await readXlsx(f);
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
+    // find month ticket cols
+    const sample=rows[0]||{};
+    const allCols=Object.keys(sample);
+    const MESES_PT=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    const monthCols={};
+    MESES_PT.forEach((mn,i)=>{
+      const col=allCols.find(c=>c.includes(mn)&&c.includes('Tickets')&&!c.includes('SUM'));
+      if(col) monthCols[i+1]=col;
+    });
+    // filter real ocorrencia rows
+    const occ_rows=rows.filter(r=>{
+      const org=String(r['Nome da Organização']||'');
+      const occ=String(r['Ocorrência']||'').trim();
+      return org!=='SUM'&&occ&&occ!==' '&&occ!=='null';
+    });
+    tktData={meses:Object.keys(monthCols).map(Number).sort((a,b)=>a-b)};
+    Object.entries(monthCols).forEach(([m,col])=>{
+      const mn=Number(m);
+      const occs=[];
+      occ_rows.forEach(r=>{
+        const q=Number(r[col])||0;
+        if(q>0) occs.push({label:String(r['Ocorrência']).trim(),qtd:q});
+      });
+      occs.sort((a,b)=>b.qtd-a.qtd);
+      const total=occs.reduce((s,o)=>s+o.qtd,0);
+      tktData[mn]={total,occs};
+    });
+    document.getElementById('box-t').classList.add('ok');
+    document.getElementById('ico-t').textContent='✓';
+    const nm=document.getElementById('nm-t');nm.textContent=f.name;nm.style.display='block';
+    document.getElementById('sh-t').textContent=tktData.meses.length+' meses encontrados';
+  }catch(e){showErr('Erro no arquivo de tickets: '+e.message);}
+}
+
+// ── formatters ──
+function fN(n){if(n==null||isNaN(n))return'—';return Number(n).toLocaleString('pt-BR');}
+function fP(n,d=2){if(n==null||isNaN(n))return'—';return Number(n).toFixed(d).replace('.',',')+"%";}
+function fR(n){if(n==null||isNaN(n))return'—';return'R$ '+Number(n).toFixed(2).replace('.',',');}
+
+const MESES_LABELS=['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MESES_ABREV=['','Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const RN=['Sudeste','Sul','Centro-Oeste','Nordeste','Norte'];
+const RC=['#1652f0','#00b4d8','#0077b6','#ef4444','#f59e0b'];
+const OC=['#1652f0','#00b4d8','#0077b6','#90e0ef','#caf0f8','#2563eb','#38bdf8','#0ea5e9','#7dd3fc','#bae6fd'];
+const PAL=['#0d3fa8','#1652f0','#2563eb','#00b4d8','#90e0ef','#0ea5e9','#7dd3fc'];
+
+function buildPerfPanel(d,m,idx){
+  const lbl=MESES_LABELS[m], abr=MESES_ABREV[m];
+  if(!d) return`<div class="sub-panel${idx===0?' active':''}" id="perf-${m}"><p style="color:#94a3b8;padding:20px">Sem dados para ${lbl}.</p></div>`;
+  const reg=RN.map(r=>d.regCounts[r]||0);
+  const regT=reg.reduce((a,b)=>a+b,0)||1;
+  const tR=RN.map(r=>d.regTicket[r]||0);
+  const regRows=RN.map((r,i)=>{
+    const q=reg[i];const p=regT>0?(q/regT*100).toFixed(1):'0.0';
+    const t=tR[i];const tc=i<2?'var(--teal)':i<3?'var(--amber)':'var(--red)';
+    return`<tr><td style="padding:10px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);font-weight:500">${i<2?'🔵':'🔴'} ${r}</td><td style="padding:10px 12px;border-bottom:1px solid var(--gray-100);text-align:right;color:var(--gray-600)">${fN(q)}</td><td style="padding:10px 12px;border-bottom:1px solid var(--gray-100);text-align:right;color:var(--gray-600)">${p}%</td><td style="padding:10px 12px;border-bottom:1px solid var(--gray-100);text-align:right;font-weight:700;color:${tc}">${fR(t)}</td></tr>`;
+  }).join('');
+  const stL=[],stD=[],stC=[];
+  if(d.entregues){stL.push('Entregues');stD.push(d.entregues);stC.push('#0eb887');}
+  if(d.devolvidas){stL.push('Devolvidas');stD.push(d.devolvidas);stC.push('#ef4444');}
+  if(d.extraviadas){stL.push('Extraviadas');stD.push(d.extraviadas);stC.push('#f59e0b');}
+  if(d.enviadas){stL.push('Enviadas');stD.push(d.enviadas);stC.push('#1652f0');}
+  const cd=JSON.stringify({stL,stD,stC,reg,regT,mE:+(d.eco_pct).toFixed(2),mR:+(d.rap_pct).toFixed(2),atQ:d.atrasados,pac:d.total,devP:+d.dev_pct.toFixed(2),extP:+d.ext_pct.toFixed(2),tR:tR.map(v=>+v.toFixed(2))});
+  return`<div class="sub-panel${idx===0?' active':''}" id="perf-${m}">
+<div class="grid-4" style="margin-bottom:24px">
+<div class="metric-card blue"><div class="m-label">📦 Pacotes</div><div class="m-value">${fN(d.total)}</div><div class="m-sub">${lbl.toLowerCase()} 2026</div><div class="m-icon">📦</div></div>
+<div class="metric-card teal"><div class="m-label">✅ Entregues</div><div class="m-value">${fP(d.ent_pct)}</div><div class="m-sub">${fN(d.entregues)} de ${fN(d.total)} · meta: 95%</div><div class="m-icon">✅</div></div>
+<div class="metric-card amber"><div class="m-label">⏰ Atrasos</div><div class="m-value">${fP(d.atr_pct)}</div><div class="m-sub">${fN(d.atrasados)} entregas · meta ≤2%</div><div class="m-icon">⏰</div></div>
+<div class="metric-card blue"><div class="m-label">🏷️ Ticket Médio</div><div class="m-value">${fR(d.ticketMedio)}</div><div class="m-sub">frete por remessa</div><div class="m-icon">🏷️</div></div>
+</div>
+<div class="grid-3" style="margin-bottom:24px">
+<div class="card"><div class="card-header"><div class="card-title">Pacotes por Status</div><span style="background:#eff3ff;color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px">${abr}</span></div><div style="position:relative;height:200px"><canvas id="st${abr}C"></canvas></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Distribuição Regional</div><span style="background:#eff3ff;color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px">${abr}</span></div><div style="position:relative;height:200px"><canvas id="rg${abr}C"></canvas></div><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:10px;font-size:11px;color:var(--gray-600)" id="rg${abr}L"></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Modalidade</div><span style="background:#eff3ff;color:var(--blue);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px">${abr}</span></div><div style="position:relative;height:200px"><canvas id="md${abr}C"></canvas></div><div style="display:flex;justify-content:center;gap:16px;margin-top:10px;font-size:11px;color:var(--gray-600)"><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span>Econômico ${d.eco_pct.toFixed(1).replace('.',',')}%</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#90e0ef;display:inline-block"></span>Rápido ${d.rap_pct.toFixed(1).replace('.',',')}%</span></div></div>
+</div>
+<div class="grid-2" style="margin-bottom:24px">
+<div class="card"><div class="card-header"><div class="card-title">Índice de Atrasos</div><span style="background:#fef3c7;color:var(--amber);font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px">${abr}</span></div><div style="position:relative;height:180px"><canvas id="at${abr}C"></canvas></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Devoluções &amp; Extravios</div><span style="background:#fee2e2;color:#991b1b;font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px">${abr}</span></div><div style="position:relative;height:180px"><canvas id="de${abr}C"></canvas></div><div style="display:flex;justify-content:center;gap:20px;margin-top:10px;font-size:11px"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block"></span><span style="color:var(--gray-600)">Dev: <strong>${fN(d.devolvidas)}</strong> (${fP(d.dev_pct)})</span></span><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></span><span style="color:var(--gray-600)">Ext: <strong>${fN(d.extraviadas)}</strong> (${fP(d.ext_pct)})</span></span></div></div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">Ticket Médio por Região — ${lbl} 2026</div></div><div class="grid-2" style="gap:20px"><div style="position:relative;height:240px"><canvas id="tr${abr}C"></canvas></div>
+<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>
+<th style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:left;border-bottom:1px solid var(--gray-200)">Região</th>
+<th style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:1px solid var(--gray-200)">Remessas</th>
+<th style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:1px solid var(--gray-200)">% Vol.</th>
+<th style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:1px solid var(--gray-200)">Ticket Médio</th>
+</tr></thead><tbody>${regRows}
+<tr style="font-weight:700"><td style="padding:10px 12px;color:var(--navy)">📦 Total</td><td style="padding:10px 12px;text-align:right;color:var(--navy)">${fN(d.total)}</td><td style="padding:10px 12px;text-align:right;color:var(--navy)">100%</td><td style="padding:10px 12px;text-align:right;color:var(--navy)">${fR(d.ticketMedio)}</td></tr>
+</tbody></table></div></div>
+</div>
+<!--CDP_${abr}:${cd}:END-->`;
+}
+
+function buildTktPanel(d,m,idx){
+  const lbl=MESES_LABELS[m],abr=MESES_ABREV[m];
+  if(!d||!d.total) return`<div class="sub-panel${idx===0?' active':''}" id="tkt-${m}"><p style="color:#94a3b8;padding:20px">Sem dados para ${lbl}.</p></div>`;
+  const occs=d.occs||[],tot=d.total;
+  const top3=occs.slice(0,3).map((o,i)=>`<div style="background:#eff3ff;border:1px solid rgba(22,82,240,0.15);border-radius:var(--radius-sm);padding:14px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px">${i+1}º ${o.label}</div><div style="font-size:28px;font-weight:800;color:var(--blue);letter-spacing:-1px">${o.qtd}</div><div style="font-size:12px;color:var(--blue);font-weight:600">${tot>0?(o.qtd/tot*100).toFixed(1).replace('.',',')+"%":"—"}</div></div>`).join('');
+  const tRows=occs.map((o,i)=>`<tr><td style="padding:9px 12px;border-bottom:1px solid var(--gray-100)"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${OC[i]||'#ccc'};margin-right:8px"></span><span style="font-weight:500;color:var(--gray-800)">${o.label}</span></td><td style="padding:9px 12px;border-bottom:1px solid var(--gray-100);text-align:right;font-weight:700;color:var(--navy)">${o.qtd}</td><td style="padding:9px 12px;border-bottom:1px solid var(--gray-100);text-align:right;color:var(--gray-600)">${tot>0?(o.qtd/tot*100).toFixed(1).replace('.',',')+"%":"—"}</td></tr>`).join('');
+  const cd=JSON.stringify({labels:occs.map(o=>o.label),data:occs.map(o=>o.qtd),total:tot});
+  return`<div class="sub-panel${idx===0?' active':''}" id="tkt-${m}">
+<div class="card" style="margin-bottom:24px"><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px"><span style="font-size:48px;font-weight:800;color:var(--blue);line-height:1;letter-spacing:-2px">${tot}</span><span style="font-size:14px;color:var(--gray-600)">tickets CS em ${lbl} 2026</span></div><div class="grid-3" style="gap:12px">${top3}</div></div>
+<div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start">
+<div class="card" style="display:flex;flex-direction:column;align-items:center"><div class="card-header" style="width:100%"><div class="card-title">Distribuição (%)</div></div><div style="position:relative;width:220px;height:220px"><canvas id="oc${abr}C"></canvas><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none"><div style="font-size:24px;font-weight:800;color:var(--navy)">${tot}</div><div style="font-size:11px;color:var(--gray-400)">tickets</div></div></div><div style="display:flex;flex-direction:column;gap:5px;width:100%;margin-top:14px" id="oc${abr}L"></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Volume por ocorrência — ${lbl} 2026</div></div><table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr><th style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:left;border-bottom:2px solid var(--gray-200)">Ocorrência</th><th style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:2px solid var(--gray-200)">Qtd</th><th style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:2px solid var(--gray-200)">%</th></tr></thead><tbody>${tRows}</tbody></table></div>
+</div></div>
+<!--CDT_${abr}:${cd}:END-->`;
+}
+
+function buildCompPerf(pd,meses){
+  const labels=meses.map(m=>MESES_LABELS[m]);
+  const vol=meses.map(m=>pd[m]?pd[m].total:0);
+  const tkt=meses.map(m=>pd[m]?+pd[m].ticketMedio.toFixed(2):0);
+  const atr=meses.map(m=>pd[m]?+pd[m].atr_pct.toFixed(2):0);
+  const dev=meses.map(m=>pd[m]?+pd[m].dev_pct.toFixed(2):0);
+  const ext=meses.map(m=>pd[m]?+pd[m].ext_pct.toFixed(2):0);
+  const eco=meses.map(m=>pd[m]?+pd[m].eco_pct.toFixed(2):0);
+  const rap=meses.map(m=>pd[m]?+pd[m].rap_pct.toFixed(2):0);
+  const tRM=meses.map(m=>pd[m]?RN.map(r=>+pd[m].regTicket[r].toFixed(2)):[]);
+  const bg=meses.map((_,i)=>PAL[i%PAL.length]);
+
+  const cd=JSON.stringify({labels,vol,tkt,atr,dev,ext,eco,rap,tRM,bg});
+  return`<div class="sub-panel" id="perf-comp">
+<div class="grid-2" style="margin-bottom:24px"><div class="card"><div class="card-header"><div class="card-title">Volume de Pacotes</div></div><div style="position:relative;height:220px"><canvas id="volC"></canvas></div></div><div class="card"><div class="card-header"><div class="card-title">Ticket Médio (R$)</div></div><div style="position:relative;height:220px"><canvas id="tktC"></canvas></div></div></div>
+<div class="grid-2" style="margin-bottom:24px"><div class="card"><div class="card-header"><div class="card-title">Índice de Atrasos (%)</div></div><div style="position:relative;height:220px"><canvas id="atrC"></canvas></div></div><div class="card"><div class="card-header"><div class="card-title">Devoluções &amp; Extravios (%)</div></div><div style="position:relative;height:220px"><canvas id="devC"></canvas></div></div></div>
+<div class="grid-2" style="margin-bottom:24px"><div class="card"><div class="card-header"><div class="card-title">Modalidade (%)</div></div><div style="position:relative;height:220px"><canvas id="modC"></canvas></div></div><div class="card"><div class="card-header"><div class="card-title">Ticket Médio por Região</div></div><div style="position:relative;height:220px"><canvas id="trkC"></canvas></div></div></div>
+</div>
+<!--CDP_COMP:${cd}:END-->`;
+}
+
+function buildCompTkt(td,pd,meses){
+  const labels=meses.map(m=>MESES_LABELS[m]);
+  const tArr=meses.map(m=>td[m]?td[m].total:0);
+  const eArr=meses.map(m=>pd&&pd[m]?pd[m].total:0);
+  const rArr=meses.map((_,i)=>eArr[i]>0?+((tArr[i]/eArr[i])*100).toFixed(2):0);
+  const rC=meses.map(m=>{const t=td[m];const p=pd&&pd[m];if(!t||!p)return'';const r=p.total>0?(t.total/p.total*100).toFixed(2).replace('.',','):'—';return`<div style="background:#fef3c7;border:1.5px solid rgba(245,158,11,0.3);border-radius:var(--radius);padding:20px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px">${MESES_LABELS[m]} 2026</div><div style="font-size:32px;font-weight:800;color:var(--amber);letter-spacing:-1px">${r}%</div><div style="font-size:12px;color:var(--gray-600);margin-top:6px">${fN(t.total)} tickets / ${fN(p.total)} envios</div></div>`;}).join('');
+  const aO={};meses.forEach(m=>{if(td[m])(td[m].occs||[]).forEach(o=>{aO[o.label]=(aO[o.label]||0)+o.qtd;});});
+  const topO=Object.entries(aO).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const mH=meses.map(m=>`<th style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:2px solid var(--gray-200)">${MESES_ABREV[m]}</th>`).join('');
+  const cR=topO.map(([lbl,tot])=>{const cols=meses.map(m=>{const d=td[m];const o=(d&&d.occs||[]).find(x=>x.label===lbl);return`<td style="padding:9px 12px;border-bottom:1px solid var(--gray-100);text-align:right;font-weight:700;color:var(--navy)">${o?o.qtd:0}</td>`;}).join('');return`<tr><td style="padding:9px 12px;border-bottom:1px solid var(--gray-100);font-weight:500;color:var(--gray-800)">${lbl}</td>${cols}<td style="padding:9px 12px;border-bottom:1px solid var(--gray-100);text-align:right;font-weight:800;color:var(--blue)">${tot}</td></tr>`;}).join('');
+  const mT=meses.map(m=>`<td style="padding:10px 12px;text-align:right;font-weight:800;color:var(--navy)">${td[m]?fN(td[m].total):0}</td>`).join('');
+  const cd=JSON.stringify({labels,tArr,eArr,rArr});
+  return`<div class="sub-panel" id="tkt-comp">
+<div class="card" style="margin-bottom:24px"><div class="card-header"><div class="card-title">Volume: Tickets × Envios × % Ratio</div></div><div style="position:relative;height:260px"><canvas id="ratC"></canvas></div></div>
+<div class="grid-${Math.min(meses.length,3)}" style="margin-bottom:24px">${rC}</div>
+<div class="card"><div class="card-header"><div class="card-title">Top ocorrências — Comparativo ${labels[0]}–${labels[labels.length-1]} 2026</div></div>
+<table style="width:100%;border-collapse:collapse;font-size:12.5px"><thead><tr><th style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:left;border-bottom:2px solid var(--gray-200)">Ocorrência</th>${mH}<th style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.8px;padding:0 12px 12px;text-align:right;border-bottom:2px solid var(--gray-200)">Total</th></tr></thead>
+<tbody>${cR}<tr style="border-top:2px solid var(--gray-200)"><td style="padding:10px 12px;font-weight:700;color:var(--navy)">🎧 Total Tickets</td>${mT}<td style="padding:10px 12px;text-align:right;font-weight:800;color:var(--blue)">${tArr.reduce((a,b)=>a+b,0)}</td></tr></tbody></table></div>
+</div>
+<!--CDT_COMP:${cd}:END-->`;
+}
+
+function buildChartJS(bHTML){
+  const pm=[],tm=[];let pc=null,tc=null;
+  let rx,m;
+  rx=/<!--CDP_([A-Za-z]+):(.+?):END-->/gs;
+  while((m=rx.exec(bHTML))!==null){const[,abr,raw]=m;let cd;try{cd=JSON.parse(raw);}catch(e){continue;}if(abr==='COMP')pc=cd;else pm.push({abr,cd});}
+  rx=/<!--CDT_([A-Za-z]+):(.+?):END-->/gs;
+  while((m=rx.exec(bHTML))!==null){const[,abr,raw]=m;let cd;try{cd=JSON.parse(raw);}catch(e){continue;}if(abr==='COMP')tc=cd;else tm.push({abr,cd});}
+  let js=`const _ci={};
+function _sc(id,cfg){if(_ci[id]){try{_ci[id].destroy();}catch(e){}}const c=document.getElementById(id);if(!c)return;if(c.offsetWidth===0||c.offsetHeight===0)return;_ci[id]=new Chart(c,cfg);}
+const RN=${JSON.stringify(RN)},RC=${JSON.stringify(RC)},OC=${JSON.stringify(OC)};
+function dn(id,l,d,c){_sc(id,{type:'doughnut',data:{labels:l,datasets:[{data:d,backgroundColor:c,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.label+': '+x.parsed}}}}});}
+function atD(id,at,tot){const p=(at/tot*100).toFixed(2);const pl={id:'cp_'+id,afterDraw(ch){const{ctx:cx,chartArea:{left:l,right:r,top:tp,bottom:bt}}=ch;const x=(l+r)/2,y=(tp+bt)/2;cx.save();cx.textAlign='center';cx.textBaseline='middle';cx.font='bold 18px sans-serif';cx.fillStyle=at===0?'#0eb887':'#f59e0b';cx.fillText(p+'%',x,y-8);cx.font='11px sans-serif';cx.fillStyle='#94a3b8';cx.fillText('atrasados',x,y+12);cx.restore();}};_sc(id,{type:'doughnut',data:{labels:['No prazo','Atrasados'],datasets:[{data:[tot-at,at],backgroundColor:['#0eb887','#f59e0b'],borderWidth:2,borderColor:'#fff',hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:x=>x.label+': '+x.parsed+' ('+(x.parsed/tot*100).toFixed(2)+'%)'}}}},plugins:[pl]});}
+function deD(id,dv,ex){_sc(id,{type:'doughnut',data:{labels:['Entregues','Devoluções','Extravios'],datasets:[{data:[parseFloat((100-dv-ex).toFixed(2)),dv,ex],backgroundColor:['#0eb887','#ef4444','#f59e0b'],borderWidth:2,borderColor:'#fff',hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:x=>x.label+': '+x.parsed.toFixed(2)+'%'}}}}});}
+function rl(id,v,t){const e=document.getElementById(id);if(!e)return;e.innerHTML='';RN.forEach((r,i)=>{e.innerHTML+='<span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:'+RC[i]+';display:inline-block"></span>'+r+' '+(v[i]/t*100).toFixed(1)+'%</span>';});}
+function trb(id,v){_sc(id,{type:'bar',data:{labels:RN,datasets:[{label:'Ticket Médio (R$)',data:v,backgroundColor:RC,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:false,min:10,ticks:{font:{size:11},callback:v=>'R$ '+v.toFixed(0)},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>'R$ '+x.parsed.y.toFixed(2)}}}}});}
+function bar(id,labels,datasets,opts){opts=opts||{};_sc(id,{type:'bar',data:{labels,datasets},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,ticks:{font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:11}},grid:{display:false}}},plugins:{legend:{display:opts.lg!==false,labels:{font:{size:11},boxWidth:12}},tooltip:{callbacks:opts.tt||{}}}}});}
+function donutOcc(id,l,d,lid){_sc(id,{type:'doughnut',data:{labels:l,datasets:[{data:d,backgroundColor:OC,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:x=>x.label+': '+x.parsed}}}}});const e=document.getElementById(lid);if(!e)return;e.innerHTML='';const t=d.reduce((a,b)=>a+b,0);l.forEach((lbl,i)=>{e.innerHTML+='<div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:'+OC[i]+';flex-shrink:0;display:inline-block"></span><span style="font-size:10px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gray-600)">'+(lbl||'—')+'</span><span style="font-size:11px;font-weight:700;color:'+(i<3?'var(--blue)':'var(--gray-400)')+';font-family:monospace;">'+( d[i]/t*100).toFixed(1)+'%</span></div>';});}
+function initCharts(){if(typeof Chart==='undefined')return;\n`;
+  pm.forEach(({abr,cd})=>{
+    js+=`dn('st${abr}C',${JSON.stringify(cd.stL)},${JSON.stringify(cd.stD)},${JSON.stringify(cd.stC)});`;
+    js+=`dn('rg${abr}C',RN,${JSON.stringify(cd.reg)},RC);`;
+    js+=`rl('rg${abr}L',${JSON.stringify(cd.reg)},${cd.regT});`;
+    js+=`dn('md${abr}C',['Econômico','Rápido'],[${cd.mE},${cd.mR}],['#1652f0','#90e0ef']);`;
+    js+=`atD('at${abr}C',${cd.atQ},${cd.pac});`;
+    js+=`deD('de${abr}C',${cd.devP},${cd.extP});`;
+    js+=`trb('tr${abr}C',${JSON.stringify(cd.tR)});\n`;
+  });
+  if(pc){const{labels,vol,tkt,atr,dev,ext,eco,rap,tRM,bg}=pc;
+    js+=`bar('volC',${JSON.stringify(labels)},[{label:'Pacotes',data:${JSON.stringify(vol)},backgroundColor:${JSON.stringify(bg)},borderRadius:6}],{lg:false});`;
+    js+=`bar('tktC',${JSON.stringify(labels)},[{label:'R$',data:${JSON.stringify(tkt)},backgroundColor:${JSON.stringify(bg)},borderRadius:6}],{lg:false,tt:{label:x=>'R$ '+x.parsed.y.toFixed(2)}});`;
+    js+=`bar('atrC',${JSON.stringify(labels)},[{label:'% atrasados',data:${JSON.stringify(atr)},backgroundColor:${JSON.stringify(atr.map(v=>v>5?'#ef4444':'#f59e0b'))},borderRadius:6}],{lg:false,tt:{label:x=>x.parsed.y.toFixed(2)+'% atrasados'}});`;
+    js+=`bar('devC',${JSON.stringify(labels)},[{label:'% Devoluções',data:${JSON.stringify(dev)},backgroundColor:'#ef4444',borderRadius:4},{label:'% Extravios',data:${JSON.stringify(ext)},backgroundColor:'#f59e0b',borderRadius:4}],{tt:{label:x=>x.dataset.label+': '+x.parsed.y.toFixed(2)+'%'}});`;
+    js+=`bar('modC',${JSON.stringify(labels)},[{label:'Econômico',data:${JSON.stringify(eco)},backgroundColor:'#1652f0',borderRadius:4},{label:'Rápido',data:${JSON.stringify(rap)},backgroundColor:'#90e0ef',borderRadius:4}],{tt:{label:x=>x.dataset.label+': '+x.parsed.y.toFixed(1)+'%'}});\n`;
+    if(tRM&&tRM.length>0){const ds=tRM.map((arr,i)=>({label:labels[i],data:arr,backgroundColor:bg[i]+'cc',borderRadius:4}));
+      js+=`_sc('trkC',{type:'bar',data:{labels:RN,datasets:${JSON.stringify(ds)}},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:false,min:10,ticks:{font:{size:10},callback:v=>'R$'+v.toFixed(0)},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:10}},grid:{display:false}}},plugins:{legend:{display:true,labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:x=>x.dataset.label+': R$ '+x.parsed.y.toFixed(2)}}}}});\n`;
+    }
+  }
+  js+=`}\nfunction initTickets(){if(typeof Chart==='undefined')return;\n`;
+  tm.forEach(({abr,cd})=>{js+=`donutOcc('oc${abr}C',${JSON.stringify(cd.labels)},${JSON.stringify(cd.data)},'oc${abr}L');\n`;});
+  if(tc){const{labels,tArr,eArr,rArr}=tc;
+    js+=`const rc=document.getElementById('ratC');if(!rc)return;if(_ci['ratC']){try{_ci['ratC'].destroy();}catch(e){}}
+_ci['ratC']=new Chart(rc,{type:'bar',data:{labels:${JSON.stringify(labels)},datasets:[{label:'Envios',data:${JSON.stringify(eArr)},backgroundColor:'rgba(22,82,240,0.15)',borderColor:'#1652f0',borderWidth:2,borderRadius:6,yAxisID:'yE'},{label:'Tickets CS',data:${JSON.stringify(tArr)},backgroundColor:${JSON.stringify(tArr.map(v=>v>100?'#ef4444':'#f59e0b'))},borderRadius:6,yAxisID:'yT'},{label:'% Tickets/Envios',data:${JSON.stringify(rArr)},type:'line',borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,0.08)',pointBackgroundColor:'#ef4444',pointRadius:6,fill:false,tension:0.3,yAxisID:'yP'}]},options:{responsive:true,maintainAspectRatio:false,scales:{yE:{type:'linear',position:'left',beginAtZero:true,title:{display:true,text:'Envios',font:{size:11}},grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}}},yT:{type:'linear',position:'right',beginAtZero:true,title:{display:true,text:'Tickets',font:{size:11}},grid:{display:false},ticks:{font:{size:11}}},yP:{type:'linear',position:'right',beginAtZero:true,max:15,grid:{display:false},ticks:{font:{size:11},color:'#ef4444',callback:v=>v.toFixed(1)+'%'},offset:true},x:{grid:{display:false},ticks:{font:{size:13}}}},plugins:{legend:{display:true,labels:{font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:x=>x.dataset.label==='% Tickets/Envios'?x.dataset.label+': '+x.parsed.y.toFixed(2)+'%':x.dataset.label+': '+x.parsed.y}}}}});\n`;
+  }
+  js+=`}
+document.addEventListener('DOMContentLoaded',function(){
+window.showSubPanel=function(id,btn){const s=btn.closest('.section');s.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));s.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');requestAnimationFrame(function(){if(s.id==='performance'||id.startsWith('perf-')){try{initCharts();}catch(e){}}if(s.id==='tickets'||id.startsWith('tkt-')){try{initTickets();}catch(e){}}});};
+document.getElementById('main-nav').addEventListener('click',function(e){const btn=e.target.closest('[data-target]');if(!btn)return;const tid=btn.getAttribute('data-target');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('#main-nav .nav-btn').forEach(b=>b.classList.remove('active'));const sec=document.getElementById(tid);if(sec)sec.classList.add('active');btn.classList.add('active');requestAnimationFrame(function(){if(tid==='performance'){try{initCharts();}catch(e){}}if(tid==='tickets'){try{initTickets();}catch(e){}}});});
+setTimeout(function(){try{initCharts();}catch(e){}try{initTickets();}catch(e){}},100);
+});`;
+  return js;
+}
+
+const MHTML=`<section class="section" id="modelo">
+
+  <div class="sec-label">Sobre a Mandaê</div>
+  <div class="sec-title">Modelo de Negócio</div>
+  <div class="sec-desc">Hub de tecnologia logística que conecta seu e-commerce às melhores transportadoras do Brasil.</div>
+
+  <!-- Sub-navegação -->
+  <div class="sub-nav">
+    <button class="sub-btn active" onclick="showSubPanel('sub-modelo', this)">Modelo de Negócio</button>
+    <button class="sub-btn" onclick="showSubPanel('sub-ecossistema', this)">Ecossistema Nuvemshop</button>
+    <button class="sub-btn" onclick="showSubPanel('sub-reputacao', this)">Reputação</button>
+    <button class="sub-btn" onclick="showSubPanel('sub-cross-docking', this)">Cross Docking</button>
+    <button class="sub-btn" onclick="showSubPanel('sub-hub-ne', this)">Hub NE 🚀</button>
+  </div>
+
+  <!-- ── SUB-PAINEL: MODELO ── -->
+  <div class="sub-panel active" id="sub-modelo">
+    <div class="grid-3" style="margin-bottom: 24px;">
+      <div class="metric-card blue">
+        <div class="m-label">Encomendas / mês</div>
+        <div class="m-value">+1MM</div>
+        <div class="m-sub">Volume processado mensalmente</div>
+      </div>
+      <div class="metric-card teal">
+        <div class="m-label">Clientes ativos</div>
+        <div class="m-value">+1.000</div>
+        <div class="m-sub">E-commerces parceiros</div>
+      </div>
+      <div class="metric-card green">
+        <div class="m-label">Cidades atendidas</div>
+        <div class="m-value">5.543</div>
+        <div class="m-sub">Sem redespacho</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <div class="card-title">Como funciona o fluxo Nuvem Envio</div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; position: relative;">
+        <div style="text-align:center;padding:16px;">
+          <div style="width:44px;height:44px;background:#eff3ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px;">🏷️</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px;">1. Importação</div>
+          <div style="font-size:11.5px;color:var(--gray-400);">Vendas importadas na plataforma</div>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="width:44px;height:44px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px;">🚚</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px;">2. Coleta</div>
+          <div style="font-size:11.5px;color:var(--gray-400);">Retirada e envio ao CD</div>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="width:44px;height:44px;background:#d1fae5;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px;">🤖</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px;">3. Algoritmo</div>
+          <div style="font-size:11.5px;color:var(--gray-400);">Melhor transportadora selecionada</div>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="width:44px;height:44px;background:#fef3c7;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px;">📍</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px;">4. Rastreamento</div>
+          <div style="font-size:11.5px;color:var(--gray-400);">Acompanhamento em tempo real</div>
+        </div>
+        <div style="text-align:center;padding:16px;">
+          <div style="width:44px;height:44px;background:#f3f0ff;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin:0 auto 10px;">📞</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-bottom:4px;">5. Atendimento</div>
+          <div style="font-size:11.5px;color:var(--gray-400);">Gerente de contas dedicado</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Diferenciais para você</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="font-size:20px;">⚡</div>
+            <div><div style="font-size:13.5px;font-weight:700;color:var(--navy);">77% das entregas em 1 ou 2 dias</div><div style="font-size:12px;color:var(--gray-400);">Velocidade de entrega líder no mercado</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="font-size:20px;">💸</div>
+            <div><div style="font-size:13.5px;font-weight:700;color:var(--navy);">Redução de até 40% no custo logístico</div><div style="font-size:12px;color:var(--gray-400);">Lojistas Nuvemshop economizam mais</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="font-size:20px;">📈</div>
+            <div><div style="font-size:13.5px;font-weight:700;color:var(--navy);">+18% de conversão para clientes Next</div><div style="font-size:12px;color:var(--gray-400);">Frete rápido aumenta as suas vendas</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="font-size:20px;">🤝</div>
+            <div><div style="font-size:13.5px;font-weight:700;color:var(--navy);">CSAT de 97% no atendimento</div><div style="font-size:12px;color:var(--gray-400);">Suporte humanizado e ágil</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Estrutura operacional</div></div>
+        <div class="grid-2" style="gap:10px;">
+          <div class="op-card">
+            <div class="op-icon">🌟</div>
+            <div class="op-title">Relacionamento</div>
+            <div class="op-desc">Atendimento ágil de ocorrências via Chat e E-mail</div>
+          </div>
+          <div class="op-card">
+            <div class="op-icon">📊</div>
+            <div class="op-title">CS</div>
+            <div class="op-desc">Ponto de contato interno nas diversas frentes</div>
+          </div>
+          <div class="op-card">
+            <div class="op-icon">⏱️</div>
+            <div class="op-title">Backoffice</div>
+            <div class="op-desc">Qualidade operacional e tratamento de casos</div>
+          </div>
+          <div class="op-card">
+            <div class="op-icon">🚛</div>
+            <div class="op-title">Last Mile</div>
+            <div class="op-desc">Gestão das transportadoras parceiras</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUB-PAINEL: ECOSSISTEMA ── -->
+  <div class="sub-panel" id="sub-ecossistema">
+    <div class="grid-3" style="margin-bottom: 24px;">
+      <div class="eco-item">
+        <div class="eco-top">
+          <div class="eco-product">nuvemenvio</div>
+          <div class="eco-category">Logística</div>
+        </div>
+        <div class="eco-stats">
+          <div class="eco-stat"><strong>+10 mil</strong> usuários</div>
+          <div class="eco-stat"><strong>+1 milhão</strong> de envios/mês</div>
+          <div class="eco-stat">Envios até <strong>60% mais baratos</strong></div>
+        </div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-top teal-bg">
+          <div class="eco-product">nuvempago</div>
+          <div class="eco-category">Pagamentos</div>
+        </div>
+        <div class="eco-stats">
+          <div class="eco-stat"><strong>+R$3,8 bi</strong> em vendas (BR)</div>
+          <div class="eco-stat"><strong>+20 mi</strong> de transações (BR+AR)</div>
+          <div class="eco-stat"><strong>+165 mil</strong> usuários</div>
+        </div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-top purple-bg">
+          <div class="eco-product">nuvemmarketing</div>
+          <div class="eco-category">Marketing</div>
+        </div>
+        <div class="eco-stats">
+          <div class="eco-stat"><strong>+15 mil</strong> usuários</div>
+          <div class="eco-stat"><strong>+20%</strong> de aumento nas vendas</div>
+          <div class="eco-stat">Automações e campanhas</div>
+        </div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-top amber-bg">
+          <div class="eco-product">ecommerce na prática</div>
+          <div class="eco-category">Educação</div>
+        </div>
+        <div class="eco-stats">
+          <div class="eco-stat"><strong>+130 mil</strong> alunos</div>
+          <div class="eco-stat"><strong>+38</strong> cursos disponíveis</div>
+          <div class="eco-stat"><strong>+450</strong> aulas</div>
+        </div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-top green-bg">
+          <div class="eco-product">nuvem</div>
+          <div class="eco-category">Carteira Digital</div>
+        </div>
+        <div class="eco-stats">
+          <div class="eco-stat"><strong>+13 mi</strong> de cadastros (BR)</div>
+          <div class="eco-stat"><strong>+1,1 mi</strong> compradores únicos</div>
+          <div class="eco-stat">Compras <strong>25% mais rápidas</strong></div>
+        </div>
+      </div>
+      <div class="eco-item">
+        <div class="eco-top" style="background:linear-gradient(135deg,#1e3a5f,#2563eb);">
+          <div class="eco-product">nuvemshop partners</div>
+          <div class="eco-category">Parcerias</div>
+        </div>
+        <div class="eco-stats">
+          <div class="eco-stat"><strong>+1.000</strong> parceiros implantadores</div>
+          <div class="eco-stat"><strong>+50</strong> gestores de tráfego cert.</div>
+          <div class="eco-stat"><strong>+20</strong> serviços prestados</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:var(--radius);padding:28px 32px;color:#fff;">
+      <div style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px;">Destaque 2025</div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:6px;">9,1 milhões de pacotes enviados pelo Nuvem Envio em 2025</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.7);">Uma plataforma que já comprovou reduzir custos e aumentar conversão para e-commerces no Brasil.</div>
+    </div>
+  </div>
+
+  <!-- ── SUB-PAINEL: REPUTAÇÃO ── -->
+  <div class="sub-panel" id="sub-reputacao">
+    <div class="ra-hero" style="margin-bottom:20px;">
+      <div>
+        <div class="ra-score">8.7</div>
+        <div class="ra-score-label">Ótimo · Reclame AQUI</div>
+      </div>
+      <div class="ra-divider"></div>
+      <div class="ra-metrics">
+        <div class="ra-metric-item">
+          <div class="ra-m-val">99%</div>
+          <div class="ra-m-label">Taxa de resposta</div>
+        </div>
+        <div class="ra-metric-item">
+          <div class="ra-m-val">92,4%</div>
+          <div class="ra-m-label">Reclamações resolvidas</div>
+        </div>
+        <div class="ra-metric-item">
+          <div class="ra-m-val">77,8%</div>
+          <div class="ra-m-label">Voltaria a fazer negócio</div>
+        </div>
+        <div class="ra-metric-item">
+          <div class="ra-m-val">2º</div>
+          <div class="ra-m-label">Melhor empresa categoria</div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="award-card">
+        <div class="award-icon">🏆</div>
+        <div>
+          <div class="award-title">RA 1000 — Reputação máxima</div>
+          <div class="award-sub">Selo de excelência em atendimento ao consumidor no Reclame AQUI</div>
+        </div>
+      </div>
+      <div class="award-card">
+        <div class="award-icon">🥇</div>
+        <div>
+          <div class="award-title">Prêmio RA 2025 — Empresa Classificada</div>
+          <div class="award-sub">Certificação na categoria Transporte e Logística · edição 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SUB-PAINEL: CROSS DOCKING ── -->
+  <div class="sub-panel" id="sub-cross-docking">
+  <div class="sec-label">Infraestrutura Logística</div>
+  <div class="sec-title">Cross Docking</div>
+  <div class="sec-desc">Centros de distribuição estratégicos para garantir velocidade e cobertura nacional.</div>
+
+  <div class="grid-3" style="margin-bottom: 24px;">
+    <!-- SP -->
+    <div class="cd-card">
+      <div class="cd-header">
+        <div>
+          <div style="font-size:22px;margin-bottom:2px;">🏙️</div>
+          <div class="cd-header-text">Vila Leopoldina — SP</div>
+          <div class="cd-header-sub" style="display:none;"></div>
+        </div>
+      </div>
+      <div class="cd-body">
+        <div class="cd-row"><span class="cd-key">Área útil</span><span class="cd-val">2.600 m²</span></div>
+        <div class="cd-row"><span class="cd-key">Gaiolas</span><span class="cd-val">360</span></div>
+        <div class="cd-row"><span class="cd-key">Volume Nov/25</span><span class="cd-val">933.139 encomendas</span></div>
+        <div class="cd-row"><span class="cd-key">Capacidade / dia</span><span class="cd-val">84.000 pacotes</span></div>
+        <div class="cd-row"><span class="cd-key">Capacidade / hora</span><span class="cd-val">16.300 pacotes</span></div>
+        <div class="cd-row"><span class="cd-key">Sortering triagem</span><span class="cd-val">28 posições</span></div>
+        <div class="cd-row"><span class="cd-key">Cubômetros</span><span class="cd-val">31 equipamentos</span></div>
+      </div>
+    </div>
+
+    <!-- MG -->
+    <div class="cd-card">
+      <div class="cd-header" style="background:linear-gradient(135deg,#0d4a3a,var(--teal));">
+        <div>
+          <div style="font-size:22px;margin-bottom:2px;">🏭</div>
+          <div class="cd-header-text">Betim — MG</div>
+        </div>
+      </div>
+      <div class="cd-body">
+        <div class="cd-row"><span class="cd-key">Área útil</span><span class="cd-val">383 m² <span class="cd-growth">+42%</span></span></div>
+        <div class="cd-row"><span class="cd-key">Gaiolas</span><span class="cd-val">93 <span class="cd-growth">+55%</span></span></div>
+        <div class="cd-row"><span class="cd-key">Cubômetros</span><span class="cd-val">10 <span class="cd-growth">+67%</span></span></div>
+        <div class="cd-row"><span class="cd-key">Volume Nov/25</span><span class="cd-val">132.673 encomendas</span></div>
+        <div class="cd-row"><span class="cd-key">Capacidade / dia</span><span class="cd-val">10.600 encomendas <span class="cd-growth">+55%</span></span></div>
+        <div class="cd-row"><span class="cd-key">Capacidade / hora</span><span class="cd-val">1.662 encomendas</span></div>
+      </div>
+    </div>
+
+    <!-- SC -->
+    <div class="cd-card">
+      <div class="cd-header" style="background:linear-gradient(135deg,#2d1b69,#7c3aed);">
+        <div>
+          <div style="font-size:22px;margin-bottom:2px;">🌊</div>
+          <div class="cd-header-text">Blumenau — SC</div>
+        </div>
+      </div>
+      <div class="cd-body">
+        <div class="cd-row"><span class="cd-key">Abrangência</span><span class="cd-val">Vale do Itajaí</span></div>
+        <div class="cd-row"><span class="cd-key">Área útil</span><span class="cd-val">225 m²</span></div>
+        <div class="cd-row"><span class="cd-key">Cubômetros</span><span class="cd-val">2</span></div>
+        <div class="cd-row"><span class="cd-key">Gaiolas</span><span class="cd-val">44</span></div>
+        <div style="margin-top:14px;background:#d1fae5;border:1px solid #6ee7b7;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:18px;">✅</span>
+          <span style="font-size:12.5px;color:#065f46;font-weight:600;">Operação iniciada em Abril / 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Diferenciais da nossa operação</div>
+    </div>
+    <div class="grid-3" style="gap:16px;">
+      <div class="feature-item">
+        <div class="feature-icon teal">⚡</div>
+        <div>
+          <div class="feature-title">Velocidade de despacho</div>
+          <div class="feature-desc">77% das entregas realizadas em 1 ou 2 dias úteis</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon blue">🗺️</div>
+        <div>
+          <div class="feature-title">Cobertura nacional</div>
+          <div class="feature-desc">5.543 cidades atendidas sem redespacho</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon amber">🤖</div>
+        <div>
+          <div class="feature-title">Algoritmo inteligente</div>
+          <div class="feature-desc">Seleção da melhor transportadora com base na melhor performance de SLA e menor prazo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- ── SUB-PAINEL: HUB NE ── -->
+  <div class="sub-panel" id="sub-hub-ne">
+  <div class="sec-label">Expansão Estratégica</div>
+  <div class="sec-title">Hub NE — Nova Era da Operação</div>
+  <div class="sec-desc">O maior salto da história da Mandaê: novo centro de distribuição com maior capacidade, previsto para inaugurar em Julho/2026.</div>
+
+  <div style="background:linear-gradient(135deg,var(--navy) 0%,var(--blue-mid) 60%,#1a7fd4 100%);border-radius:var(--radius);padding:32px 36px;color:#fff;margin-bottom:24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+    <div style="position:absolute;bottom:-30px;left:40%;width:120px;height:120px;border-radius:50%;background:rgba(14,184,135,0.15);"></div>
+    <div style="position:relative;z-index:1;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:100px;padding:6px 18px;font-size:12px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;">🚀 Inauguração: Julho/2026</div>
+      </div>
+      <div style="font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;">Meta: 1,1 milhão de pacotes em Outubro/26</div>
+      <div style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.6;">Hub logístico de nova geração que acelera conexões, suporta o crescimento acelerado do e-commerce brasileiro e beneficia diretamente os lojistas parceiros.</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Nossa Estrutura — Antes vs. Depois</div></div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:12px;background:var(--gray-50);border-radius:10px;">
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-400);margin-bottom:2px;">Área livre</div><div style="font-size:18px;font-weight:700;color:var(--gray-600);">2.600 m²</div></div>
+          <div style="text-align:center;font-size:20px;color:var(--teal);">→</div>
+          <div><div style="font-size:11px;color:var(--teal);margin-bottom:2px;">Área livre</div><div style="font-size:18px;font-weight:800;color:var(--navy);">10.000 m²</div></div>
+          <div style="text-align:center;"><span class="cd-growth">+285%</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:12px;background:var(--gray-50);border-radius:10px;">
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-400);margin-bottom:2px;">Escritórios</div><div style="font-size:18px;font-weight:700;color:var(--gray-600);">500 m²</div></div>
+          <div style="text-align:center;font-size:20px;color:var(--teal);">→</div>
+          <div><div style="font-size:11px;color:var(--teal);margin-bottom:2px;">Escritórios</div><div style="font-size:18px;font-weight:800;color:var(--navy);">2.000 m²</div></div>
+          <div style="text-align:center;"><span class="cd-growth">+300%</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:12px;background:var(--gray-50);border-radius:10px;">
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-400);margin-bottom:2px;">Descompressão</div><div style="font-size:18px;font-weight:700;color:var(--gray-600);">40 m²</div></div>
+          <div style="text-align:center;font-size:20px;color:var(--teal);">→</div>
+          <div><div style="font-size:11px;color:var(--teal);margin-bottom:2px;">Descompressão</div><div style="font-size:18px;font-weight:800;color:var(--navy);">769 m²</div></div>
+          <div style="text-align:center;"><span class="cd-growth">+1.823%</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:12px;background:var(--gray-50);border-radius:10px;">
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-400);margin-bottom:2px;">Docas</div><div style="font-size:18px;font-weight:700;color:var(--gray-600);">4</div></div>
+          <div style="text-align:center;font-size:20px;color:var(--teal);">→</div>
+          <div><div style="font-size:11px;color:var(--teal);margin-bottom:2px;">Docas</div><div style="font-size:18px;font-weight:800;color:var(--navy);">22</div></div>
+          <div style="text-align:center;"><span class="cd-growth">+450%</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:12px;background:var(--gray-50);border-radius:10px;">
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-400);margin-bottom:2px;">PAs (gaiolas)</div><div style="font-size:18px;font-weight:700;color:var(--gray-600);">165</div></div>
+          <div style="text-align:center;font-size:20px;color:var(--teal);">→</div>
+          <div><div style="font-size:11px;color:var(--teal);margin-bottom:2px;">PAs (gaiolas)</div><div style="font-size:18px;font-weight:800;color:var(--navy);">559</div></div>
+          <div style="text-align:center;"><span class="cd-growth">+239%</span></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:10px;padding:12px;background:#eff9f4;border-radius:10px;border:1px solid #bbf7d0;">
+          <div style="text-align:right;"><div style="font-size:11px;color:var(--gray-400);margin-bottom:2px;">Capacidade/dia</div><div style="font-size:18px;font-weight:700;color:var(--gray-600);">84.000</div></div>
+          <div style="text-align:center;font-size:20px;color:var(--teal);">→</div>
+          <div><div style="font-size:11px;color:var(--teal);margin-bottom:2px;">Capacidade/dia</div><div style="font-size:22px;font-weight:800;color:#065f46;">140.000</div></div>
+          <div style="text-align:center;"><span class="cd-growth">+67%</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Localização estratégica</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="width:36px;height:36px;background:#eff3ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛣️</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--navy);">Rod. Castelo Branco</div><div style="font-size:12px;color:var(--gray-400);">~3 km de distância</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="width:36px;height:36px;background:var(--teal-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🔄</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--navy);">Rodoanel Mário Covas</div><div style="font-size:12px;color:var(--gray-400);">~7 km · Evita Marginal Tietê e centro</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="width:36px;height:36px;background:#fef3c7;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛣️</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--navy);">Rod. Anhanguera</div><div style="font-size:12px;color:var(--gray-400);">~14 km de distância</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--gray-50);border-radius:10px;">
+            <div style="width:36px;height:36px;background:#eff3ff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛣️</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--navy);">Rod. Bandeirantes</div><div style="font-size:12px;color:var(--gray-400);">~15 km de distância</div></div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:12px;background:#eff3ff;border-radius:10px;border:1px solid #c7d2fe;">
+            <div style="width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">⚡</div>
+            <div><div style="font-size:13px;font-weight:700;color:var(--navy);">Acesso via Rodoanel</div><div style="font-size:12px;color:var(--gray-600);line-height:1.5;">Maior velocidade média no deslocamento de first e last mile</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:var(--radius);padding:20px 24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-size:20px;">📅</span>
+          <span style="font-size:15px;font-weight:700;color:var(--navy);">Inauguração prevista</span>
+        </div>
+        <div style="font-size:28px;font-weight:800;color:#92400e;letter-spacing:-1px;">Julho / 2026</div>
+        <div style="font-size:12.5px;color:var(--gray-600);margin-top:4px;">Meta operacional: 1,1 MM pacotes em outubro/26</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+</section>`;
+
+const DCSS=`<style>
+  :root {
+    --blue: #1652f0;
+    --blue-dark: #0d3fa8;
+    --blue-mid: #2563eb;
+    --teal: #0eb887;
+    --teal-light: #d1fae5;
+    --navy: #0d1b4b;
+    --navy-soft: #1a2f6e;
+    --white: #ffffff;
+    --gray-50: #f8fafd;
+    --gray-100: #eef1f8;
+    --gray-200: #dde3f0;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-800: #1e293b;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --red: #ef4444;
+    --font: 'Plus Jakarta Sans', system-ui, sans-serif;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(22,82,240,0.08);
+    --shadow-lg: 0 8px 40px rgba(22,82,240,0.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--gray-50);
+    color: var(--gray-800);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 60%, #1a7fd4 100%);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    pointer-events: none;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 30%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(14,184,135,0.15);
+    pointer-events: none;
+  }
+  .header-inner {
+    position: relative;
+    z-index: 1;
+    padding: 36px 48px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 8px; }
+  .logo-row { display: flex; align-items: center; gap: 16px; }
+  .logo-badge {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+  .logo-sep { color: rgba(255,255,255,0.35); font-size: 20px; font-weight: 300; }
+  .header-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 400;
+  }
+  .header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .parceria-badge {
+    background: rgba(14,184,135,0.2);
+    border: 1px solid rgba(14,184,135,0.4);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6ee7c2;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .date-label {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ─── NAV PILLS ─── */
+  .nav {
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 0 48px;
+    display: flex;
+    gap: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .nav-btn {
+    padding: 16px 20px 14px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--gray-400);
+    background: none;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+    white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--blue); }
+  .nav-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+  /* ─── SECTIONS ─── */
+  .section { display: none; padding: 40px 48px; max-width: 1200px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ─── GRID HELPERS ─── */
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    padding: 24px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* ─── METRIC CARDS ─── */
+  .metric-card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    padding: 22px 24px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    border-radius: 4px 0 0 4px;
+  }
+  .metric-card.blue::before { background: var(--blue); }
+  .metric-card.teal::before { background: var(--teal); }
+  .metric-card.amber::before { background: var(--amber); }
+  .metric-card.green::before { background: var(--green); }
+  .metric-card .m-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .metric-card .m-value {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--gray-800);
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+  .metric-card .m-sub {
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 6px;
+  }
+  .metric-card .m-icon {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .metric-card.blue .m-icon { background: #eff3ff; color: var(--blue); }
+  .metric-card.teal .m-icon { background: var(--teal-light); color: var(--teal); }
+  .metric-card.amber .m-icon { background: #fef3c7; color: var(--amber); }
+  .metric-card.green .m-icon { background: #d1fae5; color: var(--green); }
+
+  /* ─── SECTION TITLES ─── */
+  .sec-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .sec-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.4px;
+    margin-bottom: 4px;
+  }
+  .sec-desc {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline { position: relative; padding-left: 36px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--blue), var(--teal));
+    border-radius: 2px;
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 28px;
+    padding: 18px 20px;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow);
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -30px; top: 22px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--blue);
+    border: 2.5px solid #fff;
+    box-shadow: 0 0 0 2px var(--blue);
+  }
+  .tl-year {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tl-text { font-size: 13.5px; color: var(--gray-600); line-height: 1.6; }
+  .tl-text strong { color: var(--navy); }
+
+  /* ─── PERFORMANCE TABLE ─── */
+  .perf-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .perf-table th {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 0 16px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .perf-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-800);
+  }
+  .perf-table tr:last-child td { border-bottom: none; }
+  .perf-table tr:hover td { background: var(--gray-50); }
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .pill-green { background: #d1fae5; color: #065f46; }
+  .pill-blue  { background: #eff3ff; color: #1652f0; }
+  .pill-amber { background: #fef3c7; color: #92400e; }
+  .pill-red   { background: #fee2e2; color: #991b1b; }
+
+  /* ─── PROGRESS BARS ─── */
+  .prog-row { margin-bottom: 14px; }
+  .prog-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
+  .prog-label { color: var(--gray-600); font-weight: 500; }
+  .prog-val { color: var(--gray-800); font-weight: 700; }
+  .prog-bar { height: 8px; background: var(--gray-100); border-radius: 100px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 100px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+  .prog-fill.blue  { background: linear-gradient(90deg, var(--blue-mid), var(--blue)); }
+  .prog-fill.teal  { background: linear-gradient(90deg, #0eb887, #06b6d4); }
+  .prog-fill.amber { background: linear-gradient(90deg, var(--amber), #f97316); }
+
+  /* ─── FEATURE GRID ─── */
+  .feature-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 18px;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .feature-item:hover { border-color: var(--blue); box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+  .feature-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .feature-icon.blue { background: #eff3ff; }
+  .feature-icon.teal { background: var(--teal-light); }
+  .feature-icon.amber { background: #fef3c7; }
+  .feature-icon.green { background: #d1fae5; }
+  .feature-icon.purple { background: #f3f0ff; }
+  .feature-icon.pink { background: #fdf2f8; }
+  .feature-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+  .feature-desc { font-size: 12.5px; color: var(--gray-600); line-height: 1.5; }
+
+  /* ─── CD TABLE ─── */
+  .cd-card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .cd-header {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cd-header-text { font-size: 16px; font-weight: 700; color: #fff; }
+  .cd-header-sub { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .cd-body { padding: 20px 24px; }
+  .cd-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13.5px;
+  }
+  .cd-row:last-child { border-bottom: none; }
+  .cd-key { color: var(--gray-600); }
+  .cd-val { font-weight: 700; color: var(--navy); }
+  .cd-growth { font-size: 12px; font-weight: 700; color: var(--teal); background: var(--teal-light); padding: 2px 8px; border-radius: 100px; }
+
+  /* ─── ECOSSISTEMA ─── */
+  .eco-item {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
+  }
+  .eco-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .eco-top {
+    padding: 20px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue-mid) 100%);
+  }
+  .eco-top.teal-bg { background: linear-gradient(135deg, #0d4a3a, var(--teal)); }
+  .eco-top.purple-bg { background: linear-gradient(135deg, #2d1b69, #7c3aed); }
+  .eco-top.amber-bg { background: linear-gradient(135deg, #78350f, #d97706); }
+  .eco-top.green-bg { background: linear-gradient(135deg, #064e3b, #059669); }
+  .eco-product { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+  .eco-category { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.8px; }
+  .eco-stats { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .eco-stat { font-size: 13px; color: var(--gray-600); display: flex; align-items: center; gap: 6px; }
+  .eco-stat strong { color: var(--navy); font-weight: 700; }
+
+  /* ─── RA SECTION ─── */
+  .ra-hero {
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 20px;
+  }
+  .ra-score { font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: -3px; }
+  .ra-score-label { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.7); }
+  .ra-divider { width: 1px; height: 80px; background: rgba(255,255,255,0.2); }
+  .ra-metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; flex: 1; }
+  .ra-metric-item { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 14px 16px; }
+  .ra-m-val { font-size: 22px; font-weight: 800; }
+  .ra-m-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .award-card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 2px solid #f59e0b;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow);
+  }
+  .award-icon { font-size: 36px; }
+  .award-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+  .award-sub { font-size: 13px; color: var(--gray-600); margin-top: 3px; }
+
+  /* ─── OPERAÇÃO ─── */
+  .op-card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--gray-200);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .op-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+  .op-icon { font-size: 32px; margin-bottom: 12px; }
+  .op-title { font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .op-desc { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+  /* ─── CHART BARS ─── */
+  .mini-chart { display: flex; align-items: flex-end; gap: 6px; height: 60px; }
+  .bar {
+    flex: 1;
+    background: var(--blue);
+    border-radius: 4px 4px 0 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    position: relative;
+  }
+  .bar:hover { opacity: 1; }
+  .bar.highlight { opacity: 1; background: var(--teal); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .section.active > * { animation: fadeUp 0.4s ease both; }
+  .section.active > *:nth-child(2) { animation-delay: 0.05s; }
+  .section.active > *:nth-child(3) { animation-delay: 0.1s; }
+  .section.active > *:nth-child(4) { animation-delay: 0.15s; }
+  .section.active > *:nth-child(5) { animation-delay: 0.2s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-2, .grid-2-1 { grid-template-columns: 1fr; }
+    .header-inner { flex-direction: column; align-items: flex-start; }
+    .header-meta { align-items: flex-start; }
+    .nav { padding: 0 20px; overflow-x: auto; }
+    .section { padding: 28px 20px; }
+    .ra-hero { flex-direction: column; gap: 20px; }
+    .ra-divider { display: none; }
+    .ra-metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+  /* ─── SUB-TABS ─── */
+  .sub-nav {
+    display: flex;
+    gap: 4px;
+    background: var(--gray-100);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+  .sub-btn {
+    padding: 9px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-400);
+    background: none;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+    white-space: nowrap;
+  }
+  .sub-btn:hover { color: var(--blue); }
+  .sub-btn.active {
+    background: #fff;
+    color: var(--blue);
+    box-shadow: 0 2px 8px rgba(22,82,240,0.12);
+  }
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+</style>`;
+
+function generate(){
+  showErr('');
+  if(secP&&!perfData){showErr('Suba o arquivo de Performance para gerar essa seção.');return;}
+  if(secT&&!tktData){showErr('Suba o arquivo de Tickets para gerar essa seção.');return;}
+  if(!secM&&!secP&&!secT){showErr('Selecione pelo menos uma seção.');return;}
+
+  const cliente=perfData?perfData.cliente:(tktData?'Cliente':'Cliente');
+  const perfMeses=perfData?perfData.meses:[];
+  const tktMeses=tktData?tktData.meses:[];
+  const allMeses=[...new Set([...perfMeses,...tktMeses])].sort((a,b)=>a-b);
+  if(allMeses.length===0){showErr('Nenhum mês encontrado nos arquivos.');return;}
+
+  const first=secM?'modelo':secP?'performance':'tickets';
+  const navBtns=[];
+  if(secM) navBtns.push(`<button class="nav-btn" data-target="modelo">Sobre a Mandaê</button>`);
+  if(secP) navBtns.push(`<button class="nav-btn" data-target="performance">📊 Performance</button>`);
+  if(secT) navBtns.push(`<button class="nav-btn" data-target="tickets">🎧 Tickets CS</button>`);
+  const navHTML=navBtns.map((b,i)=>i===0?b.replace('class="nav-btn"','class="nav-btn active"'):b).join('\n');
+
+  let perfSec='',tktSec='';
+  if(secP&&perfData){
+    const meses=perfMeses;
+    const subBtns=meses.map((m,i)=>`<button class="sub-btn${i===0?' active':''}" onclick="showSubPanel('perf-${m}',this)">📅 ${MESES_LABELS[m]} 2026</button>`).join('')+`<button class="sub-btn" onclick="showSubPanel('perf-comp',this)">📊 Comparativo</button>`;
+    const panels=meses.map((m,i)=>buildPerfPanel(perfData[m],m,i)).join('');
+    const comp=buildCompPerf(perfData,meses);
+    // period string
+    const mFirst=MESES_LABELS[meses[0]].substring(0,3), mLast=MESES_LABELS[meses[meses.length-1]].substring(0,3);
+    perfSec=`<section class="section${first==='performance'?' active':''}" id="performance"><div class="sec-label">Resultados Operacionais</div><div class="sec-title">Performance — ${cliente}</div><div class="sec-desc">Acompanhamento de entregas, atrasos, devoluções e ticket médio por região. ${mFirst}–${mLast} 2026.</div><div class="sub-nav">${subBtns}</div>${panels}${comp}</section>`;
+  }
+  if(secT&&tktData){
+    const meses=tktMeses;
+    const subBtns=meses.map((m,i)=>`<button class="sub-btn${i===0?' active':''}" onclick="showSubPanel('tkt-${m}',this)">📅 ${MESES_LABELS[m]} 2026</button>`).join('')+`<button class="sub-btn" onclick="showSubPanel('tkt-comp',this)">📊 Comparativo</button>`;
+    const panels=meses.map((m,i)=>buildTktPanel(tktData[m],m,i)).join('');
+    const comp=buildCompTkt(tktData,perfData,meses);
+    const mFirst=MESES_LABELS[meses[0]].substring(0,3), mLast=MESES_LABELS[meses[meses.length-1]].substring(0,3);
+    tktSec=`<section class="section${first==='tickets'?' active':''}" id="tickets"><div class="sec-label">Atendimento ao Cliente</div><div class="sec-title">Tickets CS — ${cliente}</div><div class="sec-desc">Principais ocorrências, volume por tipo e comparativo mensal. ${mFirst}–${mLast} 2026.</div><div class="sub-nav">${subBtns}</div>${panels}${comp}</section>`;
+  }
+  const mSec=secM?MHTML.replace('class="section"','class="section'+(first==='modelo'?' active':'')+'"'):'';
+  const today=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  const bHTML=mSec+perfSec+tktSec;
+  const cJS=buildChartJS(bHTML);
+  genHTML=`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mandaê × ${cliente} — Painel da Parceria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"><\/script>
+${DCSS}
+</head>
+<body>
+<header class="header"><div class="header-inner"><div class="header-left"><div class="logo-row"><span class="logo-badge">Mandaê</span><span class="logo-sep">×</span><span class="logo-badge">${cliente}</span></div><div class="header-title">Mandaê × ${cliente} — Painel da Parceria</div><div class="header-sub">Painel de acompanhamento da parceria</div></div><div class="header-meta"><span class="parceria-badge">✦ Parceria Ativa</span><span class="date-label">Atualizado em ${today}</span></div></div></header>
+<nav class="nav" id="main-nav">${navHTML}</nav>
+${bHTML}
+<script>${cJS}<\/script>
+</body>
+</html>`;
+
+  document.getElementById('form-area').style.display='none';
+  const ok=document.getElementById('ok-area');ok.style.display='block';
+  document.getElementById('ok-title').textContent='Dashboard de '+cliente+' gerado!';
+  document.getElementById('ok-sub').textContent='Clique abaixo para baixar o HTML.';
+}
+
+function downloadHTML(){
+  const blob=new Blob([genHTML],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=(perfData?perfData.cliente:'dashboard').replace(/\s+/g,'-').toLowerCase()+'-dashboard.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+
+function reset(){
+  genHTML='';perfData=null;tktData=null;
+  document.getElementById('form-area').style.display='block';
+  document.getElementById('ok-area').style.display='none';
+  ['box-p','box-t'].forEach(id=>document.getElementById(id).classList.remove('ok'));
+  ['ico-p','ico-t'].forEach((id,i)=>document.getElementById(id).textContent='⬆');
+  ['nm-p','nm-t'].forEach(id=>{const e=document.getElementById(id);e.textContent='';e.style.display='none';});
+  ['sh-p','sh-t'].forEach(id=>document.getElementById(id).textContent='');
+  showErr('');
+}
+</script>
+</body>
+</html>
