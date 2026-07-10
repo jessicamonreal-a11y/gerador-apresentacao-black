@@ -8,6 +8,17 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafd;color:#1e293b;min-height:100vh}
+:root{
+  --blue:#1652f0;--blue-dark:#0d3fa8;--blue-mid:#2563eb;
+  --teal:#0eb887;--teal-light:#d1fae5;
+  --navy:#0d1b4b;--navy-soft:#1a2f6e;
+  --gray-50:#f8fafd;--gray-100:#eef1f8;--gray-200:#dde3f0;
+  --gray-400:#94a3b8;--gray-600:#475569;--gray-800:#1e293b;
+  --amber:#f59e0b;--green:#10b981;--red:#ef4444;
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 4px 24px rgba(22,82,240,0.08);
+}
 .app{max-width:680px;margin:0 auto;padding:40px 24px}
 .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:32px}
 .badge{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:700}
@@ -26,9 +37,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafd;color:#1e293
 .un{font-size:13px;font-weight:600;color:#0eb887;margin-top:3px;display:none}
 .us{font-size:11px;color:#94a3b8;margin-top:2px}
 .toggles{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
-.tog{padding:8px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #dde3f0;background:#fff;color:#94a3b8;font-family:inherit}
+.tog{padding:8px 18px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #dde3f0;background:#fff;color:#94a3b8;font-family:inherit;transition:all .15s}
 .tog.on{background:#eff3ff;color:#1652f0;border-color:#1652f0}
-.btn{width:100%;padding:15px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#0d3fa8,#1652f0);color:#fff;cursor:pointer;font-family:inherit;margin-top:4px}
+.slabel{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.7px;margin-bottom:8px;display:block;margin-top:16px}
+.btn{width:100%;padding:15px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#0d3fa8,#1652f0);color:#fff;cursor:pointer;font-family:inherit;transition:opacity .2s;margin-top:4px}
 .btn:hover{opacity:.9}
 .err{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:12px 16px;font-size:13px;color:#991b1b;margin-bottom:16px;display:none}
 .ok-area{text-align:center;padding:40px 20px;display:none}
@@ -37,26 +49,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafd;color:#1e293
 .os{font-size:14px;color:#64748b;margin-bottom:28px}
 .bdl{display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#0d3fa8,#1652f0);color:#fff;cursor:pointer;font-family:inherit;margin-right:10px}
 .brs{display:inline-block;padding:13px 30px;font-size:14px;font-weight:600;border:1.5px solid #1652f0;border-radius:12px;background:#fff;color:#1652f0;cursor:pointer;font-family:inherit}
-.info{background:#f8fafd;border:1px solid #dde3f0;border-radius:10px;padding:14px 16px;font-size:12px;color:#475569;line-height:1.8;margin-top:12px}
-.info code{font-family:monospace;font-size:11px;background:#eff3ff;padding:1px 5px;border-radius:4px;color:#1652f0}
 @media(max-width:560px){.g2{grid-template-columns:1fr}}
+
+.proc-badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 100px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.2px; margin-left: auto; white-space: nowrap; }
+  .proc-badge.blue { background: #eff3ff; color: var(--blue); }
+  .proc-badge.amber { background: #fef3c7; color: var(--amber); }
+  .proc-badge.green { background: var(--teal-light); color: var(--teal); }
+  .proc-badge.red { background: #fee2e2; color: var(--red); }
+  .proc-badge.purple { background: rgba(124,58,237,0.1); color: #7c3aed; }
+  .proc-badge.gray { background: var(--gray-100); color: var(--gray-600); }
+  .proc-card { background: #fff; border-radius: var(--radius-sm); border: 1px solid var(--gray-200); border-left: 3px solid var(--blue); padding: 18px 20px; box-shadow: var(--shadow); }
+  .proc-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .proc-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .proc-title { font-size: 14px; font-weight: 700; }
+  .proc-text { font-size: 12.5px; color: var(--gray-600); line-height: 1.7; }
+  .proc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .proc-table th { text-align: left; padding: 0 12px 10px; font-size: 10.5px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 2px solid var(--gray-100); }
+  .proc-table td { padding: 9px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-600); }
+  .proc-table tr:nth-child(even) { background: var(--gray-50); }
+  .proc-table td:first-child { color: var(--gray-800); font-weight: 500; }
+  .proc-table td.mono { font-family: 'DM Mono', monospace; color: var(--blue); font-weight: 600; font-size: 11.5px; }
 </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<!-- PASSWORD SCREEN -->
-<div id="pw-screen" style="position:fixed;inset:0;background:linear-gradient(135deg,#0d1b4b 0%,#1652f0 60%,#1a7fd4 100%);display:flex;align-items:center;justify-content:center;z-index:9999;font-family:'Segoe UI',system-ui,sans-serif;">
-  <div style="background:#fff;border-radius:20px;padding:40px 44px;width:100%;max-width:380px;box-shadow:0 24px 60px rgba(0,0,0,0.3);text-align:center;">
-    <div style="width:56px;height:56px;background:#eff3ff;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px;">🔒</div>
-    <div style="font-size:22px;font-weight:800;color:#0d1b4b;margin-bottom:6px;letter-spacing:-0.5px;">Acesso restrito</div>
-    <div style="font-size:14px;color:#64748b;margin-bottom:28px;">Digite a senha para continuar</div>
-    <input id="pw-input" type="password" placeholder="Senha" onkeydown="if(event.key==='Enter')checkPw()"
-      style="width:100%;border:1.5px solid #dde3f0;border-radius:10px;padding:12px 16px;font-size:15px;font-family:inherit;outline:none;color:#1e293b;margin-bottom:12px;text-align:center;letter-spacing:2px;">
-    <div id="pw-err" style="font-size:13px;color:#ef4444;margin-bottom:10px;display:none;">Senha incorreta. Tente novamente.</div>
-    <button onclick="checkPw()" style="width:100%;padding:13px;font-size:15px;font-weight:700;border:none;border-radius:12px;background:linear-gradient(135deg,#0d3fa8,#1652f0);color:#fff;cursor:pointer;font-family:inherit;">Entrar</button>
-  </div>
-</div>
-<div id="main-content" style="display:none;">
+
 <div class="app">
   <div class="logo-row">
     <span class="badge bn">Mandaê</span>
@@ -98,6 +117,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafd;color:#1e293
         <button class="tog on" id="tog-m" onclick="tog('m')">📋 Sobre a Mandaê</button>
         <button class="tog on" id="tog-p" onclick="tog('p')">📊 Performance</button>
         <button class="tog on" id="tog-t" onclick="tog('t')">🎧 Tickets CS</button>
+        <button class="tog on" id="tog-proc" onclick="tog('proc')">📋 Processos</button>
       </div>
     </div>
 
@@ -113,18 +133,193 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8fafd;color:#1e293
     <button class="brs" onclick="reset()">Gerar outro</button>
   </div>
 </div>
+<div id="proc-preview" style="display:none;">
+<div style="max-width:1200px;margin:0 auto;padding:32px 40px;font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;">
+  <div style="font-size:11px;font-weight:700;color:#1652f0;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Guia Operacional</div>
+  <div style="font-size:24px;font-weight:800;color:#0d1b4b;margin-bottom:6px;letter-spacing:-0.3px;">Processos NE Collect / Mandaê</div>
+  <div style="font-size:14px;color:#475569;margin-bottom:24px;">Prazos, canais e tratativas para cada tipo de ocorrência no fluxo de entregas.</div>
+  <div style="background:linear-gradient(135deg,#0d1b4b,#1652f0);border-radius:16px;padding:24px 28px;margin-bottom:24px;">
+  <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:12px;">O Papel do Customer Success</div>
+  <p style="font-size:13px;color:rgba(255,255,255,0.88);line-height:1.7;margin-bottom:14px;">A área de Customer Success é responsável por garantir que o cliente alcance seus resultados, a partir da utilização dos nossos produtos. Como fazemos isso?</p>
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+    <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#6ee7c2;font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.88);line-height:1.6;margin:0;">Entendendo as necessidades dos clientes e atuando como facilitador na condução de solução de problemas junto com as demais áreas da Mandaê, melhorando a performance operacional.</p></div>
+    <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#6ee7c2;font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.88);line-height:1.6;margin:0;">Sendo ponto focal e proporcionando atendimento de excelência no dia a dia e em necessidades pontuais.</p></div>
+  </div>
+  <div style="background:rgba(255,255,255,0.1);border-left:3px solid #6ee7c2;border-radius:0 10px 10px 0;padding:12px 16px;"><p style="font-size:12px;color:#fff;line-height:1.7;margin:0;"><strong>Atenção:</strong> Para todos os casos referentes à encomendas, precisamos de uma solicitação via painel. Para casos muito críticos ou fora do prazo, acione o executivo com o número do rastreio e ticket.</p></div>
+</div>
+  <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#1652f0;margin-bottom:14px;">Processos e tratativas por tipo de ocorrência</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #1652f0;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#eff3ff;;display:flex;align-items:center;justify-content:center;font-size:18px;">⏱</div>
+    <span style="font-size:14px;font-weight:700;color:var(--blue);;">Atrasos</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#eff3ff;color:#1652f0;white-space:nowrap;flex-shrink:0;">2–7 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Abrir solicitação questionando — nosso time irá acionar a transportadora e a roteirização deverá acontecer em até <strong>2 dias úteis para capital</strong> e até <strong>7 dias úteis para interior</strong> e/ou regiões de difícil acesso.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #f59e0b;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#fef3c7;;display:flex;align-items:center;justify-content:center;font-size:18px;">📦</div>
+    <span style="font-size:14px;font-weight:700;color:var(--amber);;">Encomenda sem movimentação</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#fef3c7;color:#f59e0b;white-space:nowrap;flex-shrink:0;">10 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Caso o pacote fique sem movimentação por <strong>10 dias úteis</strong>, tanto no nosso sistema como no sistema do parceiro, forçaremos o extravio <em>(exceto Correios)</em>.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #0eb887;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:var(--teal-light);;display:flex;align-items:center;justify-content:center;font-size:18px;">📄</div>
+    <span style="font-size:14px;font-weight:700;color:var(--teal);;">Comprovante de entrega</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#d1fae5;color:#0eb887;white-space:nowrap;flex-shrink:0;">5 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Cerca de <strong>40% dos parceiros</strong> disponibilizam os comprovantes automaticamente no painel. Caso não possua, solicitar via atendimento. Prazo de retorno: até <strong>5 dias úteis</strong>.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #7c3aed;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:rgba(124,58,237,0.1);;display:flex;align-items:center;justify-content:center;font-size:18px;">🔍</div>
+    <span style="font-size:14px;font-weight:700;color:#7c3aed;;">Acareação</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:rgba(124,58,237,0.1);color:#7c3aed;white-space:nowrap;flex-shrink:0;">5 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Em caso de desconhecimento da entrega, solicitar acareação via ticket — prazo de até <strong>5 dias úteis</strong>. Em caso de contestação, retornar dentro de <strong>48h úteis</strong>.</p>
+  <div style="background:#f0f0f8;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11.5px;color:#64748b;line-height:1.6;"><div><strong style="color:#7c3aed;">Obs.:</strong> Até 30 dias corridos da data da entrega.</div></div>
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #f59e0b;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#fef3c7;;display:flex;align-items:center;justify-content:center;font-size:18px;">⚠️</div>
+    <span style="font-size:14px;font-weight:700;color:var(--amber);;">Itens sem registro no Painel</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#fef3c7;color:#f59e0b;white-space:nowrap;flex-shrink:0;">2 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Acontece quando a remessa não é fechada no ERP. A tratativa precisa ser feita em até <strong>2 dias úteis</strong>. Após esse prazo sem tratativa, o pacote segue para devolução.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #94a3b8;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:var(--gray-100);;display:flex;align-items:center;justify-content:center;font-size:18px;">🖥️</div>
+    <span style="font-size:14px;font-weight:700;color:var(--gray-600);;">Demais tratativas no Painel</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#eef1f8;color:#94a3b8;white-space:nowrap;flex-shrink:0;">7 dias corridos</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Até <strong>7 dias corridos</strong>. Caso exceda o prazo, o pacote entra em devolução por falta de tratativa.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #ef4444;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#fee2e2;;display:flex;align-items:center;justify-content:center;font-size:18px;">↩️</div>
+    <span style="font-size:14px;font-weight:700;color:var(--red);;">Devolução</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#fee2e2;color:#ef4444;white-space:nowrap;flex-shrink:0;">15 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Prazo médio de <strong>15 dias úteis</strong>. Quando o pacote chega ao CD, geramos outro rastreio e o pacote segue à origem.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #1652f0;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#eff3ff;;display:flex;align-items:center;justify-content:center;font-size:18px;">🔒</div>
+    <span style="font-size:14px;font-weight:700;color:var(--blue);;">Bloqueio de entrega</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#eff3ff;color:#1652f0;white-space:nowrap;flex-shrink:0;">Status: Nova</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Encomenda com status <strong>Nova</strong> (ainda no XD): solicitar no Painel, aba de encomendas. O processamento será bloqueado e seguiremos com a devolução.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #f59e0b;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#fef3c7;;display:flex;align-items:center;justify-content:center;font-size:18px;">🚫</div>
+    <span style="font-size:14px;font-weight:700;color:var(--amber);;">Barrar entrega</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#fef3c7;color:#f59e0b;white-space:nowrap;flex-shrink:0;">Status: Enviada</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Acionar via canal de atendimento. <em>Caso esteja em rota, orientar o destinatário a recusar o recebimento — não é um processo garantido.</em></p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #f59e0b;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#fef3c7;;display:flex;align-items:center;justify-content:center;font-size:18px;">📍</div>
+    <span style="font-size:14px;font-weight:700;color:var(--amber);;">Endereço não localizado</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#fef3c7;color:#f59e0b;white-space:nowrap;flex-shrink:0;">7 dias corridos</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Precisaremos da confirmação do endereço, pontos de referência ou endereço alternativo na mesma cidade. Prazo: <strong>7 dias corridos</strong>.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #1652f0;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#eff3ff;;display:flex;align-items:center;justify-content:center;font-size:18px;">📥</div>
+    <span style="font-size:14px;font-weight:700;color:var(--blue);;">Encomenda não coletada</span>
+    
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Abrir solicitação via painel: <strong>Coletada sem movimentação — Envio de romaneio</strong>. Encaminhar romaneio, data, rastreio e chave de NF.</p>
+  <div style="background:#eff3ff;border-radius:8px;padding:8px 12px;margin-top:10px;font-size:11.5px;color:#1652f0;line-height:1.6;font-weight:600;"><strong>Extravio em first mile com valor declarado = reembolso.</strong></div>
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #0eb887;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:var(--teal-light);;display:flex;align-items:center;justify-content:center;font-size:18px;">🏠</div>
+    <span style="font-size:14px;font-weight:700;color:var(--teal);;">Destinatário ausente</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#d1fae5;color:#0eb887;white-space:nowrap;flex-shrink:0;">2 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Pedido é roteirizado automaticamente em até <strong>2 dias úteis</strong>.</p>
+  
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #94a3b8;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:var(--gray-100);;display:flex;align-items:center;justify-content:center;font-size:18px;">🏪</div>
+    <span style="font-size:14px;font-weight:700;color:var(--gray-600);;">Retirada em agência (Correios)</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#eef1f8;color:#94a3b8;white-space:nowrap;flex-shrink:0;">7 dias corridos</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin:0;">Correios: apenas 1 tentativa de entrega. Destinatário tem <strong>7 dias corridos</strong> para retirar na agência — após esse prazo, devolução automática.</p>
+  
+</div>
+</div>
+<div style="background:#fff;border-radius:14px;border:1.5px solid #e2e8f0;border-left:4px solid #ef4444;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.05);margin-bottom:24px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <div style="width:34px;height:34px;min-width:34px;border-radius:9px;background:#fee2e2;display:flex;align-items:center;justify-content:center;font-size:18px;">🔄</div>
+    <span style="font-size:14px;font-weight:700;color:#ef4444;">Trocas e Avarias</span>
+    <span style="display:inline-block;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;background:#fee2e2;color:#ef4444;white-space:nowrap;">Contato: 7 dias corridos · Análise: 5 dias úteis</span>
+  </div>
+  <p style="font-size:13px;color:#475569;line-height:1.75;margin-bottom:14px;">Contato em até <strong>7 dias corridos</strong> da entrega, análise em até <strong>5 dias úteis</strong>. Necessário envio de evidências.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Evidências necessárias:</div>
+      <div style="display:flex;flex-direction:column;gap:5px;font-size:12px;color:#475569;line-height:1.5;">
+        <div>— Relato sobre as condições da caixa no recebimento</div>
+        <div>— Fotos da caixa de transporte de todos os lados</div>
+        <div>— Fotos das etiquetas Mandaê e transportadora</div>
+        <div>— Fotos do item avariado/recebido</div>
+        <div>— Nota fiscal ou declaração de conteúdo</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:700;color:#ef4444;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Importante:</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:#475569;line-height:1.5;">
+        <div>— <strong>Manter a caixa reservada até o final da análise.</strong></div>
+        <div>— <strong>Evidências adicionais dentro do prazo de 7 dias corridos.</strong></div>
+        <div>— <strong>Acionamento: Nova Solicitação &gt; Encomendas &gt; Encomenda Avariada.</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div style="background:linear-gradient(135deg,#0d1b4b,#1652f0);border-radius:16px;padding:24px 28px;margin-top:8px;">
+  <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:14px;">⚠️ Importante</div>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;gap:12px;align-items:flex-start;"><span style="color:rgba(255,255,255,0.7);font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;margin:0;">Acompanhe os retornos dentro das solicitações, pois informações pendentes geram impactos na roteirização e na entrega ao destinatário.</p></div>
+    <div style="display:flex;gap:12px;align-items:flex-start;"><span style="color:rgba(255,255,255,0.7);font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;margin:0;">Estabeleça uma rotina de acompanhar o painel diariamente, principalmente para não perder os prazos de ocorrências.</p></div>
+    <div style="display:flex;gap:12px;align-items:flex-start;"><span style="color:rgba(255,255,255,0.7);font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;margin:0;">Qualquer dúvida sobre algum processo não descrito neste material, acione seu executivo de contas.</p></div>
+  </div>
+</div>
+</div>
+</div>
 
 <script>
 // ── state ──
 let perfData=null, tktData=null;
-let secM=true,secP=true,secT=true;
-let genHTML='';
-
+let perfWb=null,tktWb=null,secM=true,secP=true,secT=true,secProc=true,genHTML="";
 function showErr(m){const e=document.getElementById('err');e.textContent=m;e.style.display=m?'block':'none';}
 function tog(s){
   if(s==='m'){secM=!secM;document.getElementById('tog-m').classList.toggle('on',secM);}
   if(s==='p'){secP=!secP;document.getElementById('tog-p').classList.toggle('on',secP);}
   if(s==='t'){secT=!secT;document.getElementById('tog-t').classList.toggle('on',secT);}
+  if(s==='proc'){
+    secProc=!secProc;
+    document.getElementById('tog-proc').classList.toggle('on',secProc);
+    document.getElementById('proc-preview').style.display=secProc?'block':'none';
+  }
 }
 
 function readXlsx(f){
@@ -965,6 +1160,87 @@ const MHTML=`<section class="section" id="modelo">
 
 </section>`;
 
+const PROC_HTML=`<section class="section" id="processos">
+<div class="sec-label">Guia Operacional</div>
+<div class="sec-title">Processos NE Collect / Mandaê</div>
+<div class="sec-desc">Prazos, canais e tratativas para cada tipo de ocorrência no fluxo de entregas.</div>
+
+<div class="card" style="margin-bottom:24px;background:linear-gradient(135deg,var(--navy) 0%,var(--blue-mid) 100%);border:none;">
+  <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:14px;">O Papel do Customer Success</div>
+  <p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.7;margin-bottom:14px;">A área de Customer Success é responsável por garantir que o cliente alcance seus resultados, a partir da utilização dos nossos produtos. Como fazemos isso?</p>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+    <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#6ee7c2;font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;">Entendendo as necessidades dos clientes e atuando como facilitador na condução de solução de problemas junto com as demais áreas da Mandaê, melhorando a performance operacional.</p></div>
+    <div style="display:flex;gap:10px;align-items:flex-start;"><span style="color:#6ee7c2;font-weight:700;flex-shrink:0;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;">Sendo ponto focal e proporcionando atendimento de excelência no dia a dia e em necessidades pontuais.</p></div>
+  </div>
+  <div style="background:rgba(255,255,255,0.1);border-left:3px solid #6ee7c2;border-radius:0 10px 10px 0;padding:12px 16px;"><p style="font-size:12px;color:#fff;line-height:1.7;"><strong>Atenção:</strong> Para todos os casos referentes à encomendas, precisamos de uma solicitação via painel (abrindo nova solicitação ou pelo atendimento via chat). Para casos muito críticos ou fora do prazo, acione o executivo com o número do rastreio e ticket para priorizar o caso quando necessário.</p></div>
+</div>
+
+<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--blue);margin-bottom:14px;">Processos e tratativas por tipo de ocorrência</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:28px;">
+
+<div class="proc-card" style="border-left-color:var(--blue);"><div class="proc-card-head"><div class="proc-icon" style="background:#eff3ff;">⏱</div><span class="proc-title" style="color:var(--blue);">Atrasos</span><span class="proc-badge blue">2–7 dias úteis</span></div><p class="proc-text">Abrir solicitação questionando — nosso time irá acionar a transportadora e a roteirização deverá acontecer em até <strong>2 dias úteis para capital</strong> e até <strong>7 dias úteis para interior</strong> e/ou regiões de difícil acesso.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--amber);"><div class="proc-card-head"><div class="proc-icon" style="background:#fef3c7;">📦</div><span class="proc-title" style="color:var(--amber);">Encomenda sem movimentação</span><span class="proc-badge amber">10 dias úteis</span></div><p class="proc-text">Caso o pacote fique sem movimentação por <strong>10 dias úteis</strong>, tanto no nosso sistema como no sistema do parceiro, forçaremos o extravio <em>(exceto Correios)</em>.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--teal);"><div class="proc-card-head"><div class="proc-icon" style="background:var(--teal-light);">📄</div><span class="proc-title" style="color:var(--teal);">Comprovante de entrega</span><span class="proc-badge green">5 dias úteis</span></div><p class="proc-text">Cerca de <strong>40% dos parceiros</strong> disponibilizam os comprovantes automaticamente no painel. Caso não possua, solicitar via atendimento. Prazo de retorno: até <strong>5 dias úteis</strong>.</p></div>
+
+<div class="proc-card" style="border-left-color:#7c3aed;"><div class="proc-card-head"><div class="proc-icon" style="background:rgba(124,58,237,0.1);">🔍</div><span class="proc-title" style="color:#7c3aed;">Acareação</span><span class="proc-badge purple">5 dias úteis</span></div><p class="proc-text" style="margin-bottom:8px;">Em caso de desconhecimento da entrega, solicitar acareação via ticket — prazo de até <strong>5 dias úteis</strong>. Em caso de contestação, retornar dentro de <strong>48h úteis</strong>.</p><div style="background:rgba(124,58,237,0.06);border-radius:10px;padding:8px 10px;font-size:11px;color:var(--gray-400);line-height:1.6;"><div><strong style="color:#7c3aed;">Obs.:</strong> Até 30 dias corridos da data da entrega.</div><div><strong style="color:#7c3aed;">Exceção:</strong> Total Express: 15 dias corridos | Correios: não realiza acareações.</div></div></div>
+
+<div class="proc-card" style="border-left-color:var(--amber);"><div class="proc-card-head"><div class="proc-icon" style="background:#fef3c7;">⚠️</div><span class="proc-title" style="color:var(--amber);">Itens sem registro no Painel</span><span class="proc-badge amber">2 dias úteis</span></div><p class="proc-text">Acontece quando a remessa não é fechada no ERP. A tratativa precisa ser feita em até <strong>2 dias úteis</strong>. Após esse prazo sem tratativa, o pacote segue para devolução.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--gray-400);"><div class="proc-card-head"><div class="proc-icon" style="background:var(--gray-100);">🖥️</div><span class="proc-title" style="color:var(--gray-600);">Demais tratativas no Painel</span><span class="proc-badge gray">7 dias corridos</span></div><p class="proc-text">Até <strong>7 dias corridos</strong>. Caso exceda o prazo, o pacote entra em devolução por falta de tratativa.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--red);"><div class="proc-card-head"><div class="proc-icon" style="background:#fee2e2;">↩️</div><span class="proc-title" style="color:var(--red);">Devolução</span><span class="proc-badge red">15 dias úteis</span></div><p class="proc-text">Prazo médio de <strong>15 dias úteis</strong>. Quando o pacote chega ao CD, geramos outro rastreio e o pacote segue à origem.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--blue);"><div class="proc-card-head"><div class="proc-icon" style="background:#eff3ff;">🔒</div><span class="proc-title" style="color:var(--blue);">Bloqueio de entrega</span><span class="proc-badge blue">Status: Nova</span></div><p class="proc-text">Encomenda com status <strong>Nova</strong> (ainda no XD): solicitar no Painel, aba de encomendas. O processamento será bloqueado e seguiremos com a devolução.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--amber);"><div class="proc-card-head"><div class="proc-icon" style="background:#fef3c7;">🚫</div><span class="proc-title" style="color:var(--amber);">Barrar entrega</span><span class="proc-badge amber">Status: Enviada</span></div><p class="proc-text">Acionar via canal de atendimento. <em>Caso esteja em rota, orientar o destinatário a recusar o recebimento — não é um processo garantido.</em></p></div>
+
+<div class="proc-card" style="border-left-color:var(--amber);"><div class="proc-card-head"><div class="proc-icon" style="background:#fef3c7;">📍</div><span class="proc-title" style="color:var(--amber);">Endereço não localizado</span><span class="proc-badge amber">7 dias corridos</span></div><p class="proc-text">Precisaremos da confirmação do endereço, pontos de referência ou endereço alternativo na mesma cidade. Prazo: <strong>7 dias corridos</strong>.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--blue);"><div class="proc-card-head"><div class="proc-icon" style="background:#eff3ff;">📥</div><span class="proc-title" style="color:var(--blue);">Encomenda não coletada</span></div><p class="proc-text" style="margin-bottom:8px;">Abrir solicitação via painel: <strong>Coletada sem movimentação — Envio de romaneio</strong>. Encaminhar romaneio, data, rastreio e chave de NF.</p><div style="background:#eff3ff;border-radius:10px;padding:8px 10px;font-size:11px;color:var(--blue);line-height:1.6;"><strong>Extravio em first mile com valor declarado = reembolso.</strong></div></div>
+
+<div class="proc-card" style="border-left-color:var(--teal);"><div class="proc-card-head"><div class="proc-icon" style="background:var(--teal-light);">🏠</div><span class="proc-title" style="color:var(--teal);">Destinatário ausente</span><span class="proc-badge green">2 dias úteis</span></div><p class="proc-text">Pedido é roteirizado automaticamente em até <strong>2 dias úteis</strong>.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--gray-400);"><div class="proc-card-head"><div class="proc-icon" style="background:var(--gray-100);">🏪</div><span class="proc-title" style="color:var(--gray-600);">Retirada em agência (Correios)</span><span class="proc-badge gray">7 dias corridos</span></div><p class="proc-text">Correios: apenas 1 tentativa de entrega. Destinatário tem <strong>7 dias corridos</strong> para retirar na agência — após esse prazo, devolução automática.</p></div>
+
+<div class="proc-card" style="border-left-color:var(--red);grid-column:1/-1;"><div class="proc-card-head"><div class="proc-icon" style="background:#fee2e2;">🔄</div><span class="proc-title" style="color:var(--red);">Trocas e Avarias</span><span class="proc-badge red">Contato: 7 dias corridos · Análise: 5 dias úteis</span></div><p class="proc-text" style="margin-bottom:12px;">Contato em até <strong>7 dias corridos</strong> da entrega, análise em até <strong>5 dias úteis</strong>. Necessário envio de evidências.</p><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"><div><div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Evidências necessárias:</div><div style="display:flex;flex-direction:column;gap:5px;"><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;">Relato sobre as condições da caixa no recebimento</span></div><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;">Fotos da caixa de transporte de todos os lados</span></div><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;">Fotos das etiquetas Mandaê e transportadora</span></div><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;">Fotos do item avariado/recebido</span></div><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;">Nota fiscal ou declaração de conteúdo</span></div></div></div><div><div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.4px;">Importante:</div><div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;"><strong>Manter a caixa reservada até o final da análise.</strong></span></div><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;"><strong>Evidências adicionais dentro do prazo de 7 dias corridos.</strong></span></div><div style="display:flex;gap:8px;"><span style="color:var(--red);flex-shrink:0;">—</span><span style="font-size:11px;line-height:1.5;"><strong>Acionamento: Nova Solicitação &gt; Encomendas &gt; Encomenda Avariada.</strong></span></div></div></div></div></div>
+
+</div>
+
+<div class="card" style="margin-bottom:28px;background:linear-gradient(135deg,var(--navy),var(--blue));border:none;">
+  <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:14px;">⚠️ Importante</div>
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div style="display:flex;gap:12px;"><span style="color:rgba(255,255,255,0.7);flex-shrink:0;font-weight:700;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;">Acompanhe os retornos dentro das solicitações, pois informações pendentes geram impactos na roteirização e na entrega ao destinatário.</p></div>
+    <div style="display:flex;gap:12px;"><span style="color:rgba(255,255,255,0.7);flex-shrink:0;font-weight:700;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;">Estabeleça uma rotina de acompanhar o painel diariamente, principalmente para não perder os prazos de ocorrências.</p></div>
+    <div style="display:flex;gap:12px;"><span style="color:rgba(255,255,255,0.7);flex-shrink:0;font-weight:700;">—</span><p style="font-size:13px;color:rgba(255,255,255,0.9);line-height:1.6;">Qualquer dúvida sobre algum processo não descrito neste material, acione seu executivo de contas.</p></div>
+  </div>
+</div>
+
+<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--blue);margin-bottom:14px;">Resumo de prazos por ocorrência</div>
+<div class="card" style="margin-bottom:8px;overflow-x:auto;">
+<table class="proc-table">
+<thead><tr><th style="min-width:190px;">Ocorrência</th><th>Prazo</th><th>Canal</th><th>Obs.</th></tr></thead>
+<tbody>
+<tr><td>Atrasos</td><td class="mono">2 dias úteis (capital) / 7 (interior)</td><td>Ticket</td><td style="font-size:11px;">Roteirização via transportadora</td></tr>
+<tr><td>Encomenda sem movimentação</td><td class="mono">10 dias úteis</td><td>Automático</td><td style="font-size:11px;">Exceto Correios</td></tr>
+<tr><td>Comprovante de entrega</td><td class="mono">5 dias úteis</td><td>Atendimento</td><td style="font-size:11px;">40% disponível automaticamente</td></tr>
+<tr><td>Acareação</td><td class="mono">5 dias úteis / 48h contestação</td><td>Ticket</td><td style="font-size:11px;">Até 30 dias corridos da entrega</td></tr>
+<tr><td>Itens sem registro no Painel</td><td class="mono">2 dias úteis</td><td>ERP/Painel</td><td style="font-size:11px;">Após prazo, segue devolução</td></tr>
+<tr><td>Demais tratativas</td><td class="mono">7 dias corridos</td><td>Painel</td><td style="font-size:11px;">Após prazo, entra em devolução</td></tr>
+<tr><td>Devolução</td><td class="mono">15 dias úteis</td><td>Automático</td><td style="font-size:11px;">Depende da localidade e parceiro</td></tr>
+<tr><td>Bloqueio de entrega (Nova)</td><td class="mono">Imediato</td><td>Painel &gt; Encomendas</td><td style="font-size:11px;">Status: Nova / XD</td></tr>
+<tr><td>Barrar entrega (Enviada)</td><td class="mono">Não garantido</td><td>Atendimento</td><td style="font-size:11px;">Acionar parceiro</td></tr>
+<tr><td>Endereço não localizado</td><td class="mono">7 dias corridos</td><td>Atendimento</td><td style="font-size:11px;">Confirmar endereço/referência</td></tr>
+<tr><td>Encomenda não coletada</td><td class="mono">—</td><td>Painel (Romaneio)</td><td style="font-size:11px;">Extravio first mile = reembolso (c/ VD)</td></tr>
+<tr><td>Destinatário ausente</td><td class="mono">2 dias úteis</td><td>Automático</td><td style="font-size:11px;">Roteirização automática</td></tr>
+<tr><td>Retirada em agência</td><td class="mono">7 dias corridos</td><td>—</td><td style="font-size:11px;">Correios: 1 tentativa, após devolução</td></tr>
+<tr><td>Trocas e Avarias</td><td class="mono">7 dias (contato) / 5 dias (análise)</td><td>Painel &gt; Encomenda Avariada</td><td style="font-size:11px;">Com evidências obrigatórias</td></tr>
+</tbody>
+</table>
+</div>
+</section>`;
+
 const DCSS=`<style>
   :root {
     --blue: #1652f0;
@@ -1499,7 +1775,27 @@ const DCSS=`<style>
   }
   .sub-panel { display: none; }
   .sub-panel.active { display: block; }
-</style>`;
+
+  /* ─── PROCESSOS ─── */
+  .proc-badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 100px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.2px; margin-left: auto; white-space: nowrap; }
+  .proc-badge.blue { background: #eff3ff; color: var(--blue); }
+  .proc-badge.amber { background: #fef3c7; color: var(--amber); }
+  .proc-badge.green { background: var(--teal-light); color: var(--teal); }
+  .proc-badge.red { background: #fee2e2; color: var(--red); }
+  .proc-badge.purple { background: rgba(124,58,237,0.1); color: #7c3aed; }
+  .proc-badge.gray { background: var(--gray-100); color: var(--gray-600); }
+  .proc-card { background: #fff; border-radius: var(--radius-sm); border: 1px solid var(--gray-200); border-left: 3px solid var(--blue); padding: 18px 20px; box-shadow: var(--shadow); }
+  .proc-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .proc-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .proc-title { font-size: 14px; font-weight: 700; }
+  .proc-text { font-size: 12.5px; color: var(--gray-600); line-height: 1.7; margin: 0; }
+  .proc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .proc-table th { text-align: left; padding: 0 12px 10px; font-size: 10.5px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 2px solid var(--gray-100); }
+  .proc-table td { padding: 9px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-600); }
+  .proc-table tr:nth-child(even) { background: var(--gray-50); }
+  .proc-table td:first-child { color: var(--gray-800); font-weight: 500; }
+  .proc-table td.mono { font-family: 'DM Mono', monospace; color: var(--blue); font-weight: 600; font-size: 11.5px; }
+<\/style>`;
 
 function generate(){
   showErr('');
@@ -1513,11 +1809,12 @@ function generate(){
   const allMeses=[...new Set([...perfMeses,...tktMeses])].sort((a,b)=>a-b);
   if(allMeses.length===0){showErr('Nenhum mês encontrado nos arquivos.');return;}
 
-  const first=secM?'modelo':secP?'performance':'tickets';
+  const first=secM?'modelo':secP?'performance':secT?'tickets':'processos';
   const navBtns=[];
   if(secM) navBtns.push(`<button class="nav-btn" data-target="modelo">Sobre a Mandaê</button>`);
   if(secP) navBtns.push(`<button class="nav-btn" data-target="performance">📊 Performance</button>`);
   if(secT) navBtns.push(`<button class="nav-btn" data-target="tickets">🎧 Tickets CS</button>`);
+  if(secProc) navBtns.push(`<button class="nav-btn" data-target="processos">📋 Processos</button>`);
   const navHTML=navBtns.map((b,i)=>i===0?b.replace('class="nav-btn"','class="nav-btn active"'):b).join('\n');
 
   let perfSec='',tktSec='';
@@ -1540,7 +1837,8 @@ function generate(){
   }
   const mSec=secM?MHTML.replace('class="section"','class="section'+(first==='modelo'?' active':'')+'"'):'';
   const today=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  const bHTML=mSec+perfSec+tktSec;
+  const procSec=secProc?PROC_HTML.replace('<section class="section" id="processos">','<section class="section'+(first==='processos'?' active':'')+'" id="processos">'):'';
+  const bHTML=mSec+perfSec+tktSec+procSec;
   const cJS=buildChartJS(bHTML);
   genHTML=`<!DOCTYPE html>
 <html lang="pt-BR">
@@ -1580,6 +1878,8 @@ function reset(){
   genHTML='';perfData=null;tktData=null;
   document.getElementById('form-area').style.display='block';
   document.getElementById('ok-area').style.display='none';
+  document.getElementById('proc-preview').style.display='none';
+
   ['box-p','box-t'].forEach(id=>document.getElementById(id).classList.remove('ok'));
   ['ico-p','ico-t'].forEach((id,i)=>document.getElementById(id).textContent='⬆');
   ['nm-p','nm-t'].forEach(id=>{const e=document.getElementById(id);e.textContent='';e.style.display='none';});
@@ -1588,35 +1888,6 @@ function reset(){
 }
 </script>
 
-</div><!-- end main-content -->
 
-<script>
-function checkPw(){
-  const val=document.getElementById('pw-input').value;
-  // SHA-256 hash of password — change HASH below to your desired password hash
-  // Default password: mandae2026
-  const HASH='84b815f9b46748e6fdd005016cfa9fc365fbf4baf9ee580719caab64a4ff7c75'; // senha: mandae2026 — troque o hash para mudar
-  hashStr(val).then(h=>{
-    if(h===HASH){
-      sessionStorage.setItem('pw_ok','1');
-      document.getElementById('pw-screen').style.display='none';
-      document.getElementById('main-content').style.display='block';
-    } else {
-      document.getElementById('pw-err').style.display='block';
-      document.getElementById('pw-input').value='';
-      document.getElementById('pw-input').focus();
-    }
-  });
-}
-async function hashStr(str){
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-// Check session
-if(sessionStorage.getItem('pw_ok')==='1'){
-  document.getElementById('pw-screen').style.display='none';
-  document.getElementById('main-content').style.display='block';
-}
-</script>
 </body>
 </html>
